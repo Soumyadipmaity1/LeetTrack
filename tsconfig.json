@@ -19,6 +19,7 @@
       }
     ],
     "paths": {
+      "@prisma-client": ["./src/lib/generated/prisma-client"],
       "@lib/*": ["./src/lib/*"],
       "@components/*": ["./src/components/*"],
       "@/*": ["./src/*"]
