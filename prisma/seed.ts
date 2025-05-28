@@ -1,8 +1,5 @@
+import { PrismaClient, REMINDER_STATUS } from "@prisma-client";
 import { randomUUID } from "node:crypto";
-import {
-  PrismaClient,
-  REMINDER_STATUS,
-} from "../src/lib/generated/prisma-client";
 
 const prisma = new PrismaClient();
 
