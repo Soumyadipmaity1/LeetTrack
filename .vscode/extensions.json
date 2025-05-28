@@ -1,0 +1,11 @@
+{
+  "recommendations": [
+    "kamikillerto.vscode-colorize",
+    "streetsidesoftware.code-spell-checker-cspell-bundled-dictionaries",
+    "bradlc.vscode-tailwindcss",
+    "Prisma.prisma",
+    "esbenp.prettier-vscode",
+    "editorconfig.editorconfig",
+    "dbaeumer.vscode-eslint"
+  ]
+}
