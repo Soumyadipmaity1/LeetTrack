@@ -12,6 +12,6 @@
     "source.fixAll.ts": "always",
     "source.organizeImports": "always",
     "source.removeUnusedImports": "always"
-  }
-  //
+  },
+  "git.autofetch": true
 }
