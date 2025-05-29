@@ -69,6 +69,12 @@ enum REMINDER_STATUS {
   COMPLETED
 }
 
+enum PROBLEM_DIFFICULTY {
+  EASY
+  MEDIUM
+  HARD
+}
+
 model Reminder {
   id String @id @default(cuid())
 
@@ -76,10 +82,13 @@ model Reminder {
   reminderStatus REMINDER_STATUS @default(UPCOMING)
 
   // Details of the problem
-  problemId        String?
-  problemName      String?
-  problemStatement String?
-  problemLink      String
+  problemId         String?
+  problemName       String?
+  problemStatement  String?
+  problemTags       String?
+  problemDifficulty PROBLEM_DIFFICULTY @default(EASY)
+  // Leetcode Link
+  problemLink       String
 
   // Date when the reminder will be sent
   scheduledDate DateTime
