@@ -85,7 +85,7 @@ model Reminder {
   problemId         String?
   problemName       String?
   problemStatement  String?
-  problemTags       String?
+  problemTags       String[]
   problemDifficulty PROBLEM_DIFFICULTY @default(EASY)
   // Leetcode Link
   problemLink       String
