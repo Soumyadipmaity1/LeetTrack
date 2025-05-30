@@ -3,6 +3,7 @@ import {
   DEFAULT_SERVER_ERROR_MESSAGE,
 } from "next-safe-action";
 import { auth } from "./auth";
+import { db } from "./db";
 
 class ActionError extends Error {}
 
@@ -17,6 +18,11 @@ const actionClient = createSafeActionClient({
 
     return DEFAULT_SERVER_ERROR_MESSAGE;
   },
+}).use(async ({ next }) => {
+  // Attach the database instance to the context
+  return next({
+    ctx: { db },
+  });
 });
 
 // Auth client defined by extending the base client
