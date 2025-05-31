@@ -1,5 +1,9 @@
 import axios from "axios";
-import { ResponseDataWithTags, ResponseDataWithTitle } from "./types";
+import {
+  QuestionOfTheDay,
+  ResponseDataWithTags,
+  ResponseDataWithTitle,
+} from "./types";
 const BASE_URL = process.env.BASE_URL;
 
 type SearchQuestionParams = {
@@ -8,6 +12,10 @@ type SearchQuestionParams = {
   questionDifficulty: string | undefined;
 };
 
+/**
+ * Follow the docs here:
+ * https://github.com/alfaarghya/alfa-leetcode-api?tab=readme-ov-file#questions-details
+ */
 export async function searchQuestion(data: SearchQuestionParams) {
   if (data.questionTitle) {
     const responseData = await axios.get(
@@ -24,4 +32,9 @@ export async function searchQuestion(data: SearchQuestionParams) {
   );
 
   return responseData.data as ResponseDataWithTags;
+}
+
+export async function getQuestionOfTheDay() {
+  const responseData = await axios.get(`${BASE_URL}/daily`);
+  return responseData.data as QuestionOfTheDay;
 }

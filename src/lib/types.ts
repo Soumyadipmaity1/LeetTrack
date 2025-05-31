@@ -51,3 +51,23 @@ interface ProblemsetQuestionList {
   hasSolution: boolean;
   hasVideoSolution: boolean;
 }
+
+export interface QuestionOfTheDay {
+  questionLink: string;
+  date: string;
+  questionId: string;
+  questionFrontendId: string;
+  questionTitle: string;
+  titleSlug: string;
+  difficulty: string;
+  isPaidOnly: boolean;
+  question: string;
+  exampleTestcases: string;
+  topicTags: TopicTag[];
+  hints: any[];
+  solution: Solution;
+  companyTagStats: any;
+  likes: number;
+  dislikes: number;
+  similarQuestions: string;
+}

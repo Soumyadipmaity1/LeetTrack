@@ -1,6 +1,6 @@
 "use server";
 
-import { searchQuestion } from "@lib/leetcode";
+import { getQuestionOfTheDay, searchQuestion } from "@lib/leetcode";
 import { authActionClient } from "@lib/safe-action";
 import { z } from "zod";
 
@@ -20,6 +20,11 @@ export const searchQuestions = authActionClient
       questionDifficulty: parsedInput.questionDifficulty,
     });
   });
+
+// Get QOTD
+export const getQOTD = authActionClient.action(async () => {
+  return await getQuestionOfTheDay();
+});
 
 const createReminderSchema = z.object({
   problemId: z.string().optional(),
