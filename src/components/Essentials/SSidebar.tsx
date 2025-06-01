@@ -12,15 +12,15 @@ import {
 const elements = [
   {
     title: "Dashboard",
-    url: "#",
+    url: "dashboard",
   },
   {
     title: "Calendar",
-    url: "#",
+    url: "calendar",
   },
   {
     title: "Settings",
-    url: "#",
+    url: "settings",
   },
 ];
 
