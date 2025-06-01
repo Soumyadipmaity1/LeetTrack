@@ -33,7 +33,7 @@ const Reminders = () => {
             {Object.entries(data).map(([label,value])=>{
               return(
               <div key={label}>
-                <div className=" flex rounded p-2 border shadow-gray-300 shadow-sm flex-col">
+                <div className=" flex  p-3 border shadow-gray-300 shadow-sm flex-col">
                   <h3 className={`${roboto.className} text-xs`}>{label}</h3>
                   <p className="font-bold text-xl">{value}</p>
                 </div>
