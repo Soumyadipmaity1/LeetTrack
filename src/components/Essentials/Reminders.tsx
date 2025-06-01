@@ -34,7 +34,7 @@ const Reminders = () => {
               return(
               <div key={label}>
                 <div className=" flex rounded p-2 border shadow-gray-300 shadow-sm flex-col">
-                  <h3 className={`${oswald.className} text-xs`}>{label}</h3>
+                  <h3 className={`${roboto.className} text-xs`}>{label}</h3>
                   <p className="font-bold text-xl">{value}</p>
                 </div>
               </div>
