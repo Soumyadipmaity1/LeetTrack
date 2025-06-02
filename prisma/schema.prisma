@@ -47,14 +47,26 @@ model VerificationToken {
   @@id([identifier, token])
 }
 
+enum NOTIFICATION_METHOD {
+  EMAIl
+  PUSH_NOTIFICATION // For browser notifications
+}
+
 model User {
   id            String    @id @default(cuid())
-  name          String?
   email         String    @unique
   emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
+
+  name             String?
+  image            String?
+  leetCodeUsername String  @unique
+  bio              String  @default("")
+  goals            String  @default("")
+
+  preferredNotificationMethod NOTIFICATION_METHOD @default(EMAIl)
+
+  accounts Account[]
+  sessions Session[]
 
   // User can set multiple reminders
   reminder Reminder[]
