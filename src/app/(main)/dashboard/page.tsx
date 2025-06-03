@@ -1,12 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
 import SearchFilter from "@/components/Essentials/SearchFilter";
-import Reminders from "@components/Essentials/Reminders";
 import RemainderModal from "@components/Essentials/RemainderModal";
-import RemainderTable from "@components/Essentials/RemainderTable";
+import Reminders from "@components/Essentials/Reminders";
 import { Button } from "@components/ui/button";
 import { Plus } from "lucide-react";
+import { useState } from "react";
 
 const Page = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -17,7 +16,10 @@ const Page = () => {
         {/* Header and Add Reminder Button */}
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-3xl font-bold">LeetCode Reminder Dashboard</h1>
-          <Button className="cursor-pointer p-2 flex items-center gap-2" onClick={() => setIsOpen(true)}>
+          <Button
+            className="cursor-pointer p-2 flex items-center gap-2"
+            onClick={() => setIsOpen(true)}
+          >
             <Plus /> Add Reminder
           </Button>
         </div>
