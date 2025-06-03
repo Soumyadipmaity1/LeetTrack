@@ -1,4 +1,3 @@
-import BaseLayout from "@/Provider/BaseLayout";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -28,7 +27,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <BaseLayout>{children}</BaseLayout>
+        {children}
       </body>
     </html>
   );
