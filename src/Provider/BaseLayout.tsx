@@ -11,7 +11,11 @@ export default function BaseLayout({
 }) {
   return (
     <SidebarProvider>
+
       <div className="flex h-screen w-full">
+
+      <div className="flex h-screen w-screen">
+
         <div className="w-64">
           <SSidebar />
         </div>
