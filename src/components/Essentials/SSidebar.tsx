@@ -8,6 +8,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import Link from "next/link";
 
 const elements = [
   {
@@ -35,9 +36,9 @@ export function SSidebar() {
               {elements.map((ele) => (
                 <SidebarMenuItem key={ele.title}>
                   <SidebarMenuButton asChild>
-                    <a href={ele.url}>
+                    <Link href={ele.url} prefetch={true}>
                       <span>{ele.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
