@@ -2,31 +2,14 @@
 
 import { CredentialsForm } from "@/components/credentialsForm";
 import { GoogleSignInButton } from "@/components/GoogleSignInButton";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
 
 export default function LoginPage() {
   const { data: session } = useSession();
 
   if (session) {
-    return (
-      <div className="max-w-md mx-auto mt-10 p-8 bg-white rounded shadow flex flex-col items-center">
-        <button
-          onClick={() => signOut()}
-          type="button"
-          className="btn btn-primary mb-4"
-        >
-          Sign Out
-        </button>
-        <div className="text-center">
-          <div className="text-lg font-semibold">
-            Signed in as {session.user?.name ?? session.user?.email ?? "User"}
-          </div>
-          {session.user?.email && (
-            <div className="text-gray-500">{session.user.email}</div>
-          )}
-        </div>
-      </div>
-    );
+    return redirect("/");
   }
 
   return (
