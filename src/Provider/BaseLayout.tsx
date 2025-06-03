@@ -12,7 +12,7 @@ export default function BaseLayout({
   return (
     <SidebarProvider>
 
-      <div className="flex h-screen w-full">
+    <div className="flex h-screen w-full">
 
       <div className="flex h-screen w-screen">
 
@@ -25,6 +25,7 @@ export default function BaseLayout({
             {children}
           </main>
         </div>
+      </div>
       </div>
     </SidebarProvider>
   );

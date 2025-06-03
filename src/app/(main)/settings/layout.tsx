@@ -1,4 +1,4 @@
-export default function SettingsLayout({
+export default function CalenderLayout({
   children,
 }: {
   children: React.ReactNode;
