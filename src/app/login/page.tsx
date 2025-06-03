@@ -1,8 +1,8 @@
 "use client";
 
-import { useSession, signIn, signOut } from "next-auth/react";
 import { CredentialsForm } from "@/components/credentialsForm";
 import { GoogleSignInButton } from "@/components/GoogleSignInButton";
+import { signOut, useSession } from "next-auth/react";
 
 export default function LoginPage() {
   const { data: session } = useSession();
