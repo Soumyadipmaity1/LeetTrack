@@ -18,6 +18,7 @@
         "name": "next"
       }
     ],
+    "baseUrl": ".",
     "paths": {
       "@prisma-client": ["./src/lib/generated/prisma-client"],
       "@lib/*": ["./src/lib/*"],
