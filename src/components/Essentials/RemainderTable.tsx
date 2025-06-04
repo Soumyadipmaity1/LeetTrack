@@ -74,9 +74,9 @@ export default function RemainderTable() {
   };
 
   return (
-    <div className="mt-5">
-      <h2 className="text-2xl font-bold mb-0.5">Your Reminders</h2>
-      <p className="text-muted-foreground font-semibold text-md mb-4.5">
+    <div className="border p-4 rounded">
+      <h2 className="text-xl font-bold">Your Reminders</h2>
+      <p className="text-sm text-muted-foreground mb-2 font-semibold">
         Manage your scheduled LeetCode problem reminders
       </p>
       <Card>
@@ -99,7 +99,7 @@ export default function RemainderTable() {
                   <TableCell className="flex flex-row gap-2 mt-2 font-semibold">
                     {reminder.question}
                     <Link href="#">
-                      <SquareArrowOutUpRight size={10} className="mt-1.5" />
+                      <SquareArrowOutUpRight size={10} className="mt-2" />
                     </Link>
                   </TableCell>
                   <TableCell>

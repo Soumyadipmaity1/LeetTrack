@@ -2,6 +2,7 @@
 
 import SearchFilter from "@/components/Essentials/SearchFilter";
 import RemainderModal from "@components/Essentials/RemainderModal";
+import RemainderTable from "@components/Essentials/RemainderTable";
 import Reminders from "@components/Essentials/Reminders";
 import { Button } from "@components/ui/button";
 import { Plus } from "lucide-react";
@@ -11,7 +12,7 @@ const Page = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <main className="p-5 min-h-screen flex flex-col items-center pt-24">
+    <main className="min-h-screen flex flex-col items-center pt-14">
       <div className="w-full max-w-5xl">
         {/* Header and Add Reminder Button */}
         <div className="flex items-center justify-between mb-6">
@@ -25,19 +26,20 @@ const Page = () => {
         </div>
 
         {/* Stats, Calendar, and Search/Filter */}
-        <div className="mb-8">
+        <div className="mb-4">
           {/* Place your stats and calendar components here if you have them */}
+          <Reminders />
         </div>
 
         {/* Search & Filter */}
-        <div className="mb-6">
+        <div className="mb-3.5">
           <SearchFilter />
         </div>
 
         {/* Reminders Table */}
-        <div className="mb-12">
-          <Reminders />
-          {/* If you want to use the custom RemainderTable, replace <Reminders /> with <RemainderTable /> */}
+        <div className="mb-5">
+          {/* If you want to use the custom RemainderTable, replace <Reminders /> with */}
+          <RemainderTable />
         </div>
       </div>
 
