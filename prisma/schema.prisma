@@ -61,7 +61,7 @@ model User {
 
   name             String?
   image            String?
-  leetCodeUsername String  @unique
+  leetCodeUsername String  @unique @default(cuid())
   bio              String  @default("")
   goals            String  @default("")
 
