@@ -3,6 +3,7 @@
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Button } from "./ui/button";
 
 interface CredentialsFormProps {
   csrfToken?: string;
@@ -43,7 +44,6 @@ export function CredentialsForm(props: CredentialsFormProps) {
           {error}
         </span>
       )}
-
       <label htmlFor="email" className="mb-1 font-semibold text-sm">
         Email
       </label>
@@ -55,7 +55,6 @@ export function CredentialsForm(props: CredentialsFormProps) {
         required
         className="w-full px-4 py-3 mb-4 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-black text-base"
       />
-
       <label htmlFor="password" className="mb-1 font-semibold text-sm">
         Password
       </label>
@@ -67,8 +66,10 @@ export function CredentialsForm(props: CredentialsFormProps) {
         required
         className="w-full px-4 py-3 mb-6 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-black text-base"
       />
-
       {/* Add your submit button and other elements below as needed */}
+      <Button type="submit" className="cursor-pointer">
+        Sign In
+      </Button>
     </form>
   );
 }
