@@ -14,8 +14,7 @@ export default function LoginPage() {
 
   return (
     <div className="max-w-md mx-auto mt-10 p-8 bg-white rounded shadow">
-      <h2 className="text-2xl font-bold mb-2">Welcome Back</h2>
-      <p className="mb-6 text-gray-500">Sign in to your account</p>
+      
       <CredentialsForm />
 
       <div className="flex items-center my-4">
