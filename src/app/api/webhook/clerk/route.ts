@@ -1,22 +1,89 @@
-import { verifyWebhook } from "@clerk/nextjs/webhooks";
-import { NextRequest } from "next/server";
+import { type WebhookEvent } from "@clerk/nextjs/server";
+import { db } from "@lib/db";
+import { headers } from "next/headers";
+import { Webhook } from "svix";
 
-export async function POST(req: NextRequest) {
-  try {
-    const evt = await verifyWebhook(req);
+export async function POST(req: Request) {
+  const SIGNING_SECRET = process.env.CLERK_WEBHOOK_SIGNING_SECRET;
 
-    // Do something with payload
-    // For this guide, log payload to console
-    const { id } = evt.data;
-    const eventType = evt.type;
-    console.log(
-      `Received webhook with ID ${id} and event type of ${eventType}`
+  if (!SIGNING_SECRET) {
+    throw new Error(
+      "Error: Please add SIGNING_SECRET from Clerk Dashboard to .env or .env.local"
     );
-    console.log("Webhook payload:", evt.data);
-
-    return new Response("Webhook received", { status: 200 });
-  } catch (err) {
-    console.error("Error verifying webhook:", err);
-    return new Response("Error verifying webhook", { status: 400 });
   }
+
+  // Create new Svix instance with secret
+  const wh = new Webhook(SIGNING_SECRET);
+
+  // Get headers
+  const headerPayload = await headers();
+  const svix_id = headerPayload.get("svix-id");
+  const svix_timestamp = headerPayload.get("svix-timestamp");
+  const svix_signature = headerPayload.get("svix-signature");
+
+  // If there are no headers, error out
+  if (!svix_id || !svix_timestamp || !svix_signature) {
+    return new Response("Error: Missing Svix headers", {
+      status: 400,
+    });
+  }
+
+  // Get body
+  const body = JSON.stringify(await req.json());
+
+  let evt: WebhookEvent;
+
+  // Verify payload with headers
+  try {
+    evt = wh.verify(body, {
+      "svix-id": svix_id,
+      "svix-timestamp": svix_timestamp,
+      "svix-signature": svix_signature,
+    }) as WebhookEvent;
+  } catch (err) {
+    console.error("Error: Could not verify webhook:", err);
+    return new Response("Error: Verification error", {
+      status: 400,
+    });
+  }
+
+  const eventType = evt.type;
+
+  if (eventType === "user.created") {
+    await db.user.create({
+      data: {
+        externalUserId: evt.data.id,
+        email: evt.data.email_addresses[0]!.email_address,
+        profileImage: evt.data.image_url,
+        username: evt.data.username ?? "Unknown",
+        phoneNumber: evt.data.phone_numbers[0]!.phone_number ?? "",
+        createdAt: new Date(evt.data.created_at),
+      },
+    });
+  }
+
+  if (eventType === "user.deleted") {
+    const { id: userId } = evt.data;
+    await db.user.delete({
+      where: {
+        externalUserId: userId,
+      },
+    });
+  }
+
+  if (eventType === "user.updated") {
+    await db.user.update({
+      where: {
+        externalUserId: evt.data.id,
+      },
+      data: {
+        email: evt.data.email_addresses[0]!.email_address,
+        profileImage: evt.data.image_url,
+        username: evt.data.username ?? "Unknown",
+        phoneNumber: evt.data.phone_numbers[0]!.phone_number ?? "",
+      },
+    });
+  }
+
+  return new Response("Webhook received", { status: 200 });
 }
