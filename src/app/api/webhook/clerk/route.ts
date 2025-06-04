@@ -3,6 +3,14 @@ import { db } from "@lib/db";
 import { headers } from "next/headers";
 import { Webhook } from "svix";
 
+function getEmail(emails: any[]) {
+  return emails[emails.length - 1].email_address ?? "Unknown";
+}
+
+function getPhoneNumber(phone: any[]) {
+  return phone[phone.length - 1].phone_number ?? "Unknown";
+}
+
 export async function POST(req: Request) {
   const SIGNING_SECRET = process.env.CLERK_WEBHOOK_SIGNING_SECRET;
 
@@ -53,10 +61,10 @@ export async function POST(req: Request) {
     await db.user.create({
       data: {
         externalUserId: evt.data.id,
-        email: evt.data.email_addresses[0]!.email_address,
         profileImage: evt.data.image_url,
         username: evt.data.username ?? "Unknown",
-        phoneNumber: evt.data.phone_numbers[0]!.phone_number ?? "",
+        email: getEmail(evt.data.email_addresses),
+        phoneNumber: getPhoneNumber(evt.data.phone_numbers),
         createdAt: new Date(evt.data.created_at),
       },
     });
@@ -77,10 +85,10 @@ export async function POST(req: Request) {
         externalUserId: evt.data.id,
       },
       data: {
-        email: evt.data.email_addresses[0]!.email_address,
         profileImage: evt.data.image_url,
         username: evt.data.username ?? "Unknown",
-        phoneNumber: evt.data.phone_numbers[0]!.phone_number ?? "",
+        email: getEmail(evt.data.email_addresses),
+        phoneNumber: getPhoneNumber(evt.data.phone_numbers),
       },
     });
   }
