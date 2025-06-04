@@ -1,8 +1,8 @@
+import { auth } from "@clerk/nextjs/server";
 import {
   createSafeActionClient,
   DEFAULT_SERVER_ERROR_MESSAGE,
 } from "next-safe-action";
-import { auth } from "./auth";
 import { db } from "./db";
 
 class ActionError extends Error {}
@@ -30,9 +30,9 @@ export const authActionClient = actionClient
   // Define authorization middleware.
   .use(async ({ next }) => {
     const session = await auth();
-    if (!session?.user) {
+    if (!session) {
       throw new Error("Session not found!");
     }
     // Return the next middleware with `user` value in the context
-    return next({ ctx: { user: session.user } });
+    return next({ ctx: { user: session } });
   });
