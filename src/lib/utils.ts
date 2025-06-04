@@ -15,6 +15,21 @@ export function getUserFromDb(email: string) {
   });
 }
 
+export function hashPassword(password: string): {
+  passwordHash: string;
+  passwordSalt: string;
+} {
+  const passwordSalt = crypto.randomBytes(32).toString("hex");
+  const passwordHash = crypto
+    .pbkdf2Sync(password, passwordSalt, 10_000, 64, "sha512")
+    .toString("hex");
+
+  return {
+    passwordHash,
+    passwordSalt,
+  };
+}
+
 export async function verifyPassword(
   givenPassword: string,
   passwordHash: string,
