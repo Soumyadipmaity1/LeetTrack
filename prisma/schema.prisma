@@ -8,67 +8,24 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Account {
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String?
-  access_token      String?
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String?
-  session_state     String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@id([provider, providerAccountId])
-}
-
-model Session {
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model VerificationToken {
-  identifier String
-  token      String
-  expires    DateTime
-
-  @@id([identifier, token])
-}
-
 enum NOTIFICATION_METHOD {
   EMAIl
   PUSH_NOTIFICATION // For browser notifications
 }
 
 model User {
-  id            String    @id @default(cuid())
-  email         String    @unique
-  passwordHash  String?
-  passwordSalt  String?
-  emailVerified DateTime?
+  id          String @id @default(cuid())
+  email       String @unique
+  phoneNumber String @unique
 
-  name             String?
-  image            String?
-  leetCodeUsername String  @unique @default(cuid())
-  bio              String  @default("")
-  goals            String  @default("")
+  username         String
+  profileImage     String
+  leetCodeUsername String @unique @default(cuid())
+
+  bio   String @default("")
+  goals String @default("")
 
   preferredNotificationMethod NOTIFICATION_METHOD @default(EMAIl)
-
-  accounts Account[]
-  sessions Session[]
 
   // User can set multiple reminders
   reminder Reminder[]
