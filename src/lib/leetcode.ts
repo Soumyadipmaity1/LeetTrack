@@ -4,7 +4,7 @@ import {
   ResponseDataWithTags,
   ResponseDataWithTitle,
 } from "./types";
-const BASE_URL = process.env.BASE_URL;
+const BASE_URL = process.env.LEETCODE_BASE_URL;
 
 type SearchQuestionParams = {
   questionTitle: string | undefined;
