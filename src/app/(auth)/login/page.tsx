@@ -20,7 +20,7 @@ export default function LoginPage() {
         <p className="text-gray-500 text-center mb-6 text-base">
           Sign in to your LeetCode Reminder account
         </p>
-        <CredentialsForm />
+        <CredentialsForm formType="login" />
 
         <div className="flex items-center my-4">
           <div className="flex-grow h-px bg-gray-300"></div>

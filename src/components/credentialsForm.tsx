@@ -1,5 +1,6 @@
 "use client";
 
+import { signUp } from "@lib/auth";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -7,6 +8,7 @@ import { Button } from "./ui/button";
 
 interface CredentialsFormProps {
   csrfToken?: string;
+  formType: "login" | "signup";
 }
 
 export function CredentialsForm(props: CredentialsFormProps) {
@@ -16,17 +18,32 @@ export function CredentialsForm(props: CredentialsFormProps) {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
+    switch (props.formType) {
+      case "login":
+        const signInResponse = await signIn("credentials", {
+          email: data.get("email"),
+          password: data.get("password"),
+          redirect: false,
+        });
 
-    const signInResponse = await signIn("credentials", {
-      email: data.get("email"),
-      password: data.get("password"),
-      redirect: false,
-    });
+        if (signInResponse && !signInResponse.error) {
+          router.push("/dashboard"); // Change to your desired route
+        } else {
+          setError("Your Email or Password is wrong!");
+        }
+        break;
 
-    if (signInResponse && !signInResponse.error) {
-      router.push("/dashboard"); // Change to your desired route
-    } else {
-      setError("Your Email or Password is wrong!");
+      case "signup":
+        const signUpResponse = await signUp(
+          (data.get("email") as string) ?? "",
+          (data.get("password") as string) ?? ""
+        );
+
+        if (signUpResponse) {
+          router.push("/dashboard"); // Change to your desired route
+        } else {
+          setError("Your Email or Password is wrong!");
+        }
     }
   };
 
