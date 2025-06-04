@@ -1,8 +1,6 @@
-"use client";
-
-import { signUp } from "@lib/auth";
+import { signUp } from "@/app/(auth)/signup/action";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
 import { useState } from "react";
 import { Button } from "./ui/button";
 
@@ -12,12 +10,9 @@ interface CredentialsFormProps {
 }
 
 export function CredentialsForm(props: CredentialsFormProps) {
-  const router = useRouter();
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const data = new FormData(e.currentTarget);
+  const handleSubmit = async (data: FormData) => {
     switch (props.formType) {
       case "login":
         const signInResponse = await signIn("credentials", {
@@ -27,7 +22,7 @@ export function CredentialsForm(props: CredentialsFormProps) {
         });
 
         if (signInResponse && !signInResponse.error) {
-          router.push("/dashboard"); // Change to your desired route
+          redirect("/dashboard");
         } else {
           setError("Your Email or Password is wrong!");
         }
@@ -38,11 +33,10 @@ export function CredentialsForm(props: CredentialsFormProps) {
           (data.get("email") as string) ?? "",
           (data.get("password") as string) ?? ""
         );
-
         if (signUpResponse) {
-          router.push("/dashboard"); // Change to your desired route
+          redirect("/dashboard"); // Change to your desired route
         } else {
-          setError("Your Email or Password is wrong!");
+          setError("Something went wrong!. Please try again later.");
         }
     }
   };
@@ -50,7 +44,9 @@ export function CredentialsForm(props: CredentialsFormProps) {
   return (
     <form
       className="max-w-md w-full mx-auto bg-white p-0 flex flex-col"
-      onSubmit={handleSubmit}
+      action={async (formData) => {
+        await handleSubmit(formData);
+      }}
     >
       {error && (
         <span className="p-4 mb-2 text-lg font-semibold text-white bg-red-500 rounded-md text-center">
@@ -81,7 +77,7 @@ export function CredentialsForm(props: CredentialsFormProps) {
       />
       {/* Add your submit button and other elements below as needed */}
       <Button type="submit" className="cursor-pointer">
-        Sign In
+        {props.formType === "login" ? "Sign In" : "Sign Up"}
       </Button>
     </form>
   );
