@@ -12,7 +12,12 @@ export function CredentialsForm(props: CredentialsFormProps) {
   const handleSubmit = async (data: FormData) => {
     switch (props.formType) {
       case "login":
-        await customSignIn(data);
+        const { error } = await customSignIn(data);
+        if (!error) {
+          redirect("/dashboard");
+        } else {
+          toast.error("Your Email or Password is wrong!");
+        }
         break;
 
       case "signup":

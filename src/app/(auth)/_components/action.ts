@@ -23,5 +23,11 @@ export const signUp = async (email: string, password: string) => {
 };
 
 export const customSignIn = async (data: FormData) => {
-  return await signIn("credentials", data);
+  try {
+    await signIn("credentials", data);
+    return { error: false };
+  } catch (error) {
+    console.log(error);
+    return { error: true };
+  }
 };
