@@ -1,5 +1,4 @@
-import { signUp } from "@/app/(auth)/signup/action";
-import { signIn } from "next-auth/react";
+import { customSignIn, signUp } from "@/app/(auth)/_components/action";
 import { redirect } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "../../../components/ui/button";
@@ -13,18 +12,7 @@ export function CredentialsForm(props: CredentialsFormProps) {
   const handleSubmit = async (data: FormData) => {
     switch (props.formType) {
       case "login":
-        const signInResponse = await signIn("credentials", {
-          email: data.get("email"),
-          password: data.get("password"),
-          redirect: false,
-        });
-
-        console.log(signInResponse);
-        if (signInResponse && !signInResponse.error && signInResponse.ok) {
-          redirect("/dashboard");
-        } else {
-          toast.error("Your Email or Password is wrong!");
-        }
+        await customSignIn(data);
         break;
 
       case "signup":
@@ -43,8 +31,9 @@ export function CredentialsForm(props: CredentialsFormProps) {
   return (
     <form
       className="max-w-md w-full mx-auto bg-white p-0 flex flex-col"
-      action={async (formData) => {
-        await handleSubmit(formData);
+      onSubmit={async (e) => {
+        e.preventDefault();
+        await handleSubmit(new FormData(e.target as HTMLFormElement));
       }}
     >
       <label htmlFor="email" className="mb-1 font-semibold text-sm">
