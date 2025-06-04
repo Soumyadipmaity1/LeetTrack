@@ -1,7 +1,7 @@
 "use client";
 
-import { CredentialsForm } from "@/components/credentialsForm";
-import { GoogleSignInButton } from "@/components/GoogleSignInButton";
+import { CredentialsForm } from "@/app/(auth)/_components/credentialsForm";
+import { GoogleSignInButton } from "@/app/(auth)/_components/GoogleSignInButton";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { redirect } from "next/navigation";

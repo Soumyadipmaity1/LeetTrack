@@ -2,7 +2,7 @@ import { signUp } from "@/app/(auth)/signup/action";
 import { signIn } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { useState } from "react";
-import { Button } from "./ui/button";
+import { Button } from "../../../components/ui/button";
 
 interface CredentialsFormProps {
   csrfToken?: string;
