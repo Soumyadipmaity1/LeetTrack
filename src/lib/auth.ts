@@ -3,7 +3,7 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import { db } from "./db";
-import { getUserFromDb, hashPassword, verifyPassword } from "./utils";
+import { getUserFromDb, verifyPassword } from "./utils";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(db),
@@ -46,21 +46,3 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
 });
-
-export const signUp = async (email: string, password: string) => {
-  const { passwordHash, passwordSalt } = hashPassword(password);
-
-  try {
-    const user = await db.user.create({
-      data: {
-        email,
-        passwordHash,
-        passwordSalt,
-        leetCodeUsername: "",
-      },
-    });
-    return user;
-  } catch (error) {
-    return null;
-  }
-};
