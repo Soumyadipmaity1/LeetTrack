@@ -4,11 +4,19 @@ import { headers } from "next/headers";
 import { Webhook } from "svix";
 
 function getEmail(emails: any[]) {
-  return emails[emails.length - 1].email_address ?? "Unknown";
+  const data = emails[emails.length - 1];
+  if (data) {
+    return data.email_address ?? "Unknown";
+  }
+  return "Unknown";
 }
 
 function getPhoneNumber(phone: any[]) {
-  return phone[phone.length - 1].phone_number ?? "Unknown";
+  const data = phone[phone.length - 1];
+  if (data) {
+    return data.phone_number ?? "Unknown";
+  }
+  return "Unknown";
 }
 
 export async function POST(req: Request) {
@@ -62,7 +70,11 @@ export async function POST(req: Request) {
       data: {
         externalUserId: evt.data.id,
         profileImage: evt.data.image_url,
-        username: evt.data.username ?? "Unknown",
+        username:
+          evt.data.username ??
+          evt.data.first_name ??
+          evt.data.last_name ??
+          "Unknown",
         email: getEmail(evt.data.email_addresses),
         phoneNumber: getPhoneNumber(evt.data.phone_numbers),
         createdAt: new Date(evt.data.created_at),
@@ -86,7 +98,11 @@ export async function POST(req: Request) {
       },
       data: {
         profileImage: evt.data.image_url,
-        username: evt.data.username ?? "Unknown",
+        username:
+          evt.data.username ??
+          evt.data.first_name ??
+          evt.data.last_name ??
+          "Unknown",
         email: getEmail(evt.data.email_addresses),
         phoneNumber: getPhoneNumber(evt.data.phone_numbers),
       },
