@@ -35,10 +35,6 @@ export function CredentialsForm(props: CredentialsFormProps) {
       className="max-w-md w-full mx-auto bg-white p-0 flex flex-col"
       onSubmit={handleSubmit}
     >
-      <h2 className="text-2xl font-bold text-center mb-1">Welcome Back</h2>
-      <p className="text-gray-500 text-center mb-6 text-base">
-        Sign in to your LeetCode Reminder account
-      </p>
       {error && (
         <span className="p-4 mb-2 text-lg font-semibold text-white bg-red-500 rounded-md text-center">
           {error}

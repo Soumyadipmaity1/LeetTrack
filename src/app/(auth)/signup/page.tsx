@@ -16,8 +16,10 @@ export default function LoginPage() {
   return (
     <>
       <div className="max-w-md mx-auto mt-10 p-8 bg-white rounded shadow">
-        <h2 className="text-2xl font-bold mb-2">Welcome Back</h2>
-        <p className="mb-6 text-gray-500">Sign in to your account</p>
+        <h2 className="text-2xl font-bold text-center mb-1">Welcome Back</h2>
+        <p className="text-gray-500 text-center mb-6 text-base">
+          Sign in to your LeetCode Reminder account
+        </p>
         <CredentialsForm />
 
         <div className="flex items-center my-4">
@@ -30,10 +32,10 @@ export default function LoginPage() {
       </div>
       <div className="max-w-md mx-auto">
         <Link
-          href="/signup"
+          href="/login"
           className="text-blue-600 text-sm flex flex-row-reverse"
         >
-          don&apos;t have an account? Sign Up
+          Already have an account? Login
         </Link>
       </div>
     </>
