@@ -11,19 +11,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     Google,
     Credentials({
-      // You can specify which fields should be submitted, by adding keys to the `credentials` object.
-      // e.g. domain, username, password, 2FA token, etc.
       credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
+        email: { label: "email", type: "email" },
+        password: { label: "password", type: "password" },
       },
       authorize: async (credentials) => {
-        // logic to verify if the user exists
         const user = await getUserFromDb(credentials.email as string);
 
         if (!user) {
-          // No user found, so this is their first attempt to login
-          // Optionally, this is also the place you could do a user registration
           throw new Error("Invalid email.");
         }
 
