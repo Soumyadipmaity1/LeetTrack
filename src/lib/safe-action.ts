@@ -33,6 +33,9 @@ export const authActionClient = actionClient
     if (!session) {
       throw new Error("Session not found!");
     }
+    if (!session.userId) {
+      throw new Error("User ID not found!");
+    }
     // Return the next middleware with `user` value in the context
     return next({ ctx: { user: session } });
   });
