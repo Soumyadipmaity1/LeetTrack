@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "postinstall": "prisma generate",
-    "db:generate": "prisma migrate dev",
-    "db:migrate": "prisma migrate deploy",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
     "db:seed": "tsx ./prisma/seed.ts",
@@ -62,7 +62,7 @@
     "react-hook-form": "^7.56.4",
     "react-resizable-panels": "^3.0.2",
     "recharts": "^2.15.3",
-    "sonner": "^2.0.3",
+    "sonner": "^2.0.5",
     "tailwind-merge": "^3.3.0",
     "vaul": "^1.1.2",
     "zod": "^3.25.42"
