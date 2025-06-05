@@ -37,7 +37,7 @@ export default async function Dashboard() {
       {/* Reminders Table */}
       <div className="mb-5">
         {/* If you want to use the custom RemainderTable, replace <Reminders /> with */}
-        <RemainderTable />
+        <RemainderTable reminders={receivedData.data} />
       </div>
     </main>
   );
