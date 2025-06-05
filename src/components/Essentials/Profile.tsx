@@ -28,9 +28,9 @@ const Profile = () => {
         experiencelevel: string,
         goals: string
     }
-    const onSubmit = () => {
-        handleSubmit(data => console.log(data));
-    }
+    const onSubmit = (data: ProfileValues) => {
+  console.log(data);
+}
     const timezone = [
         { value: 'UTC+0', label: 'UTC+0' },
         { value: 'UTC+5:30', label: 'UTC+5:30 (IST)' },
@@ -43,7 +43,7 @@ const Profile = () => {
 
     const handlePreview = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-        if (file && file.size < 2 * 1024 * 1024) { // 2MB max
+        if (file && file.size < 2 * 1024 * 1024) {
             const imageURL = URL.createObjectURL(file);
             setPreview(imageURL);
         } else {
@@ -135,7 +135,8 @@ const Profile = () => {
                                 <select {...register("experiencelevel")} className=" border w-full border-gray-400 rounded-xs px-2" name="experiencelevel">
                                     <option value="">Select your level</option>
                                     {experiencelevel.map((level, idx) => (
-                                        <option key={idx} value={level.label}>{level.label} ({level.message})</option>
+                                        <option key={idx} value={level.label}>
+                                            <span className="bg-black rounded-full text-white">{level.label}</span> ({level.message})</option>
                                     ))}
                                 </select>
                             </div>
