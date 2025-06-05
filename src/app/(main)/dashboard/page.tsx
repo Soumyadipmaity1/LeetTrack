@@ -1,13 +1,22 @@
-"use client";
+"use server";
 
 import SearchFilter from "@/components/Essentials/SearchFilter";
 import RemainderModal from "@components/Essentials/RemainderModal";
 import RemainderTable from "@components/Essentials/RemainderTable";
 import Reminders from "@components/Essentials/Reminders";
-import { useState } from "react";
+import { toast } from "sonner";
+import { getReminders } from "./dashboard-action";
 
-const Page = () => {
-  const [isOpen, setIsOpen] = useState(false);
+export default async function Dashboard() {
+  const receivedData = await getReminders();
+
+  if (receivedData?.serverError) {
+    return toast.error("An error occurred while fetching reminders.");
+  }
+
+  if (!receivedData?.data) {
+    return <>Create a new reminder!</>;
+  }
 
   return (
     <main className="min-h-screen flex flex-col pt-7">
@@ -17,7 +26,7 @@ const Page = () => {
       {/* Stats, Calendar, and Search/Filter */}
       <div className="mb-4">
         {/* Place your stats and calendar components here if you have them */}
-        <Reminders />
+        <Reminders reminders={receivedData.data} />
       </div>
 
       {/* Search & Filter */}
@@ -32,6 +41,4 @@ const Page = () => {
       </div>
     </main>
   );
-};
-
-export default Page;
+}

@@ -1,5 +1,6 @@
 "use client";
 import { Calendar } from "@/components/ui/calendar";
+import { Reminder } from "@prisma-client";
 import { AlertTriangle, CalendarDays, CheckCircle, Clock } from "lucide-react";
 import * as React from "react";
 
@@ -32,22 +33,29 @@ const iconMap: Record<
   },
 };
 
-const Reminders = () => {
-  const data: ReminderStats = {
-    "Total Reminders": 1,
-    "Upcoming Reminders": 2,
-    "Completed Questions": 3,
-    "Missed Reminders": 4,
+const Reminders = ({ reminders }: { reminders: Reminder[] }) => {
+  const reminderData: ReminderStats = {
+    "Total Reminders": reminders.length,
+    "Upcoming Reminders": reminders.filter(
+      (r) => r.reminderStatus === "UPCOMING"
+    ).length,
+    "Completed Questions": reminders.filter(
+      (r) => r.reminderStatus === "COMPLETED"
+    ).length,
+    "Missed Reminders": 0,
   };
+  reminderData["Missed Reminders"] =
+    reminderData["Total Reminders"] -
+    (reminderData["Upcoming Reminders"] + reminderData["Completed Questions"]);
+
   const [date, setDate] = React.useState<Date | undefined>(new Date());
 
   return (
     <div>
       <div className="gap-3 flex">
         {/* Stat Cards */}
-        {Object.entries(data).map(([label, value]) => {
+        {Object.entries(reminderData).map(([label, value]) => {
           const { icon } = iconMap[label as keyof ReminderStats];
-
           return (
             <div key={label} className="border flex w-60 h-24 p-4">
               <div>
