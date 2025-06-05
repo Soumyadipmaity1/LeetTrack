@@ -91,6 +91,7 @@ export const updateReminder = authActionClient
         ...parsedInput,
       },
     });
+    return revalidatePath("/dashboard");
   });
 
 const deleteReminderSchema = z.object({
