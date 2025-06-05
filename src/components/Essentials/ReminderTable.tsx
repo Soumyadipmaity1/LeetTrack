@@ -74,7 +74,7 @@ export default function RemainderTable({
                   <TableCell>
                     <Link
                       className="flex flex-row gap-2 font-semibold hover:underline"
-                      href={reminder.problemLink}
+                      href={`https://leetcode.com/problems/${reminder.problemName}`}
                       target="_blank"
                     >
                       {reminder.problemName}
