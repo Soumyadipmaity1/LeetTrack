@@ -1,4 +1,6 @@
-import { Button } from "@/components/ui/button";
+"use client";
+
+import { deleteReminder } from "@/app/(main)/dashboard/dashboard-action";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Table,
@@ -9,10 +11,20 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@components/ui/badge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@components/ui/dropdown-menu";
 import { cn } from "@lib/utils";
 import { PROBLEM_DIFFICULTY, Reminder, REMINDER_STATUS } from "@prisma-client";
-import { MoreHorizontal, SquareArrowOutUpRight } from "lucide-react";
+import { Loader, MoreHorizontal, SquareArrowOutUpRight } from "lucide-react";
+import { useAction } from "next-safe-action/hooks";
 import Link from "next/link";
+import { useEffect } from "react";
+import { toast } from "sonner";
 
 export default function RemainderTable({
   reminders,
@@ -70,7 +82,7 @@ export default function RemainderTable({
             </TableHeader>
             <TableBody className="text-base cursor-default">
               {reminders.map((reminder, index) => (
-                <TableRow key={index}>
+                <TableRow key={index + Math.random()}>
                   <TableCell>
                     <Link
                       className="flex flex-row gap-2 font-semibold hover:underline"
@@ -97,9 +109,17 @@ export default function RemainderTable({
                   </TableCell>
                   {/* <TableCell>{reminder.notification}</TableCell> */}
                   <TableCell className="text-right">
-                    <Button size="icon" variant="ghost">
-                      <MoreHorizontal className="w-4 h-4" />
-                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger>
+                        <MoreHorizontal className="w-4 h-4" />
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        <CustomDropDownMenuContent
+                          reminder={reminder}
+                          key={index + Math.random()}
+                        />
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </TableCell>
                 </TableRow>
               ))}
@@ -108,5 +128,38 @@ export default function RemainderTable({
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+function CustomDropDownMenuContent({ reminder }: { reminder: Reminder }) {
+  const {
+    execute: deleteReminderAction,
+    isExecuting: isDeletingReminder,
+    hasErrored: hasDeletedReminderError,
+    hasSucceeded: hasDeletedReminder,
+  } = useAction(deleteReminder);
+
+  useEffect(() => {
+    if (hasDeletedReminder) {
+      toast.success("Successfully deleted reminder");
+    }
+    if (hasDeletedReminderError) {
+      toast.error("Error deleting reminder");
+    }
+  }, [hasDeletedReminder, hasDeletedReminderError]);
+
+  return (
+    <>
+      <DropdownMenuItem>Edit</DropdownMenuItem>
+      <DropdownMenuSeparator className="p-0 m-0" />
+      <DropdownMenuItem
+        onClick={() => {
+          deleteReminderAction({ reminderId: reminder.id });
+        }}
+        disabled={isDeletingReminder}
+      >
+        {isDeletingReminder ? <Loader className="animate-spin" /> : "Delete"}
+      </DropdownMenuItem>
+    </>
   );
 }
