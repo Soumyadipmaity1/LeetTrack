@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -16,7 +18,7 @@ import { Plus } from "lucide-react";
 export default function AddReminderModal() {
   return (
     <Dialog>
-      <form>
+      <form onSubmit={(e) => e.preventDefault()}>
         <DialogTrigger asChild>
           <div className="flex items-center justify-between">
             <Button className="cursor-pointer flex items-center gap-2">
@@ -26,27 +28,30 @@ export default function AddReminderModal() {
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Edit profile</DialogTitle>
+            <DialogTitle>Add Reminder</DialogTitle>
             <DialogDescription>
-              Make changes to your profile here. Click save when you&apos;re
-              done.
+              Add a new reminder to your list!
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4">
             <div className="grid gap-3">
-              <Label htmlFor="name-1">Name</Label>
-              <Input id="name-1" name="name" defaultValue="Pedro Duarte" />
+              <Label htmlFor="problem-link">Problem Link</Label>
+              <Input
+                id="problem-link"
+                name="Problem Link"
+                placeholder="https://leetcode.com/problems/..."
+              />
             </div>
             <div className="grid gap-3">
-              <Label htmlFor="username-1">Username</Label>
-              <Input id="username-1" name="username" defaultValue="@peduarte" />
+              <Label htmlFor="schedule-date">Schedule Date</Label>
+              <Input id="schedule-date" name="schedule-date" type="date" />
             </div>
           </div>
           <DialogFooter>
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
             </DialogClose>
-            <Button type="submit">Save changes</Button>
+            <Button type="submit">Add</Button>
           </DialogFooter>
         </DialogContent>
       </form>
