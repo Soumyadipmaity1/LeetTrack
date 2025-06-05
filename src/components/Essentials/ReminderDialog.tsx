@@ -19,8 +19,8 @@ import { useAction } from "next-safe-action/hooks";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-// https:\/\/leetcode.com\/problems\/(.+)\/(.+)?
-const LEETCODE_URL_MATCHER = /https:\/\/leetcode.com\/problems\/(.+)\/(.+)?/g;
+// https:\/\/leetcode\.com\/problems\/([^\/]+)
+const LEETCODE_URL_MATCHER = /https:\/\/leetcode\.com\/problems\/([^\/]+)/g;
 
 export default function AddReminderModal() {
   const [questionTitle, setQuestionTitle] = useState<string>();
