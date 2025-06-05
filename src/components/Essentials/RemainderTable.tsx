@@ -64,7 +64,7 @@ export default function RemainderTable({
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody className="text-base cursor-pointer">
+            <TableBody className="text-base cursor-default">
               {reminders.map((reminder, index) => (
                 <TableRow key={index}>
                   <TableCell>
