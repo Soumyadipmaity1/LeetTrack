@@ -1,7 +1,8 @@
 "use server";
 
-import { getQuestionOfTheDay } from "@lib/leetcode";
+import { getQuestionOfTheDay, searchQuestion } from "@lib/leetcode";
 import { authActionClient } from "@lib/safe-action";
+import { PROBLEM_DIFFICULTY } from "@prisma-client";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
@@ -37,11 +38,19 @@ export const createReminder = authActionClient
   .schema(createReminderSchema)
   .action(async ({ ctx, parsedInput }) => {
     const { questionTitle, scheduledDate } = parsedInput;
+    const questionData = await searchQuestion({ questionTitle });
+
+    if (!questionData) {
+      throw new Error("Question not found!");
+    }
+
     await ctx.db.reminder.create({
       data: {
         userId: ctx.user.id,
         problemName: questionTitle,
         scheduledDate: scheduledDate,
+        problemDifficulty:
+          questionData.difficulty.toUpperCase() as PROBLEM_DIFFICULTY,
       },
     });
     return revalidatePath("/dashboard");
