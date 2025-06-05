@@ -54,10 +54,9 @@ model Reminder {
   reminderStatus REMINDER_STATUS @default(UPCOMING)
 
   // Details of the problem
-  problemName       String?
+  // Leetcode Link: https://leetcode.com/problems/problem-name
+  problemName       String
   problemDifficulty PROBLEM_DIFFICULTY @default(EASY)
-  // Leetcode Link
-  problemLink       String
 
   // Date when the reminder will be sent
   scheduledDate DateTime
@@ -68,5 +67,5 @@ model Reminder {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([userId, problemName, problemLink])
+  @@index([userId, problemName])
 }
