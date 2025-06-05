@@ -4,7 +4,6 @@ import { createReminder } from "@/app/(main)/dashboard/dashboard-action";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -54,7 +53,7 @@ export default function AddReminderModal() {
           </Button>
         </div>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent showCloseButton={false} className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Add Reminder</DialogTitle>
           <DialogDescription>
@@ -95,17 +94,15 @@ export default function AddReminderModal() {
           </div>
         </div>
         <DialogFooter>
-          <DialogClose asChild>
-            <Button
-              variant="outline"
-              disabled={isExecuting}
-              onClick={() => {
-                setIsDialogOpen(false);
-              }}
-            >
-              Cancel
-            </Button>
-          </DialogClose>
+          <Button
+            variant="outline"
+            disabled={isExecuting}
+            onClick={() => {
+              setIsDialogOpen(false);
+            }}
+          >
+            Cancel
+          </Button>
           <Button
             disabled={!questionTitle || !scheduleDate || isExecuting}
             type="submit"
