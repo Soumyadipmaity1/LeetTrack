@@ -1,5 +1,4 @@
 "use client";
-import { Calendar } from "@/components/ui/calendar";
 import { Reminder } from "@prisma-client";
 import { AlertTriangle, CalendarDays, CheckCircle, Clock } from "lucide-react";
 import * as React from "react";
@@ -69,14 +68,14 @@ const Reminders = ({ reminders }: { reminders: Reminder[] }) => {
           );
         })}
 
-        <div className="w-fit min-w-[250px]">
+        {/* <div className="w-fit min-w-[250px]">
           <Calendar
             className="rounded-md border shadow-sm"
             mode="single"
             selected={date}
             onSelect={setDate}
           />
-        </div>
+        </div> */}
       </div>
     </div>
   );

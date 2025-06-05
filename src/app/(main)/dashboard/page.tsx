@@ -1,6 +1,5 @@
 "use server";
 
-import SearchFilter from "@/components/Essentials/SearchFilter";
 import RemainderModal from "@components/Essentials/RemainderModal";
 import RemainderTable from "@components/Essentials/RemainderTable";
 import Reminders from "@components/Essentials/Reminders";
@@ -30,9 +29,9 @@ export default async function Dashboard() {
       </div>
 
       {/* Search & Filter */}
-      <div className="mb-3.5">
+      {/* <div className="mb-3.5">
         <SearchFilter />
-      </div>
+      </div> */}
 
       {/* Reminders Table */}
       <div className="mb-5">
