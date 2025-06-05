@@ -1,6 +1,6 @@
 "use server";
 
-import { getQuestionOfTheDay, searchQuestion } from "@lib/leetcode";
+import { getQuestionOfTheDay } from "@lib/leetcode";
 import { authActionClient } from "@lib/safe-action";
 import { z } from "zod";
 
@@ -35,18 +35,14 @@ const createReminderSchema = z.object({
 export const createReminder = authActionClient
   .schema(createReminderSchema)
   .action(async ({ ctx, parsedInput }) => {
-    const { questionTitle } = parsedInput;
-    console.log(questionTitle);
-    const data = await searchQuestion({
-      questionTitle: questionTitle,
+    const { questionTitle, scheduledDate } = parsedInput;
+    await ctx.db.reminder.create({
+      data: {
+        userId: ctx.user.id,
+        problemName: questionTitle,
+        scheduledDate: scheduledDate,
+      },
     });
-    console.log(data);
-    // await ctx.db.reminder.create({
-    //   data: {
-    //     userId: ctx.user.id,
-    //     ...parsedInput,
-    //   },
-    // });
   });
 
 // Used for fetching reminders for the authenticated user.
