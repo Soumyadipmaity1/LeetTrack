@@ -1,8 +1,8 @@
 "use server";
 
-import RemainderModal from "@components/Essentials/RemainderModal";
-import RemainderTable from "@components/Essentials/RemainderTable";
+import ReminderDialog from "@components/Essentials/ReminderDialog";
 import Reminders from "@components/Essentials/Reminders";
+import ReminderTable from "@components/Essentials/ReminderTable";
 import { toast } from "sonner";
 import { getReminders } from "./dashboard-action";
 
@@ -20,7 +20,7 @@ export default async function Dashboard() {
   return (
     <main className="min-h-screen flex flex-col pt-7">
       {/* Modal for Adding a Reminder */}
-      <RemainderModal />
+      <ReminderDialog />
 
       {/* Stats, Calendar, and Search/Filter */}
       <div className="mb-4">
@@ -35,8 +35,8 @@ export default async function Dashboard() {
 
       {/* Reminders Table */}
       <div className="mb-5">
-        {/* If you want to use the custom RemainderTable, replace <Reminders /> with */}
-        <RemainderTable reminders={receivedData.data} />
+        {/* If you want to use the custom ReminderTable, replace <Reminders /> with */}
+        <ReminderTable reminders={receivedData.data} />
       </div>
     </main>
   );
