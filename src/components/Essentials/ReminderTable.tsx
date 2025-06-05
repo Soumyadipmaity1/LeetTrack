@@ -1,6 +1,5 @@
 "use client";
 
-import { deleteReminder } from "@/app/(main)/dashboard/dashboard-action";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Table,
@@ -11,20 +10,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@components/ui/badge";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@components/ui/dropdown-menu";
 import { cn } from "@lib/utils";
 import { PROBLEM_DIFFICULTY, Reminder, REMINDER_STATUS } from "@prisma-client";
-import { Loader, MoreHorizontal, SquareArrowOutUpRight } from "lucide-react";
-import { useAction } from "next-safe-action/hooks";
+import { SquareArrowOutUpRight } from "lucide-react";
 import Link from "next/link";
-import { useEffect } from "react";
-import { toast } from "sonner";
 
 export default function RemainderTable({
   reminders,
@@ -74,15 +63,21 @@ export default function RemainderTable({
                 <TableHead>Question</TableHead>
                 <TableHead>Difficulty</TableHead>
                 <TableHead>Scheduled Date</TableHead>
-                {/* <TableHead>Time</TableHead> */}
                 <TableHead>Status</TableHead>
-                {/* <TableHead>Notification</TableHead> */}
-                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody className="text-base cursor-default">
               {reminders.map((reminder, index) => (
-                <TableRow key={index + Math.random()}>
+                <TableRow
+                  className="cursor-pointer"
+                  key={index + Math.random()}
+                  onClick={() => {
+                    window.open(
+                      `https://leetcode.com/problems/${reminder.problemName}`,
+                      "_blank"
+                    );
+                  }}
+                >
                   <TableCell>
                     <Link
                       className="flex flex-row gap-2 font-semibold hover:underline"
@@ -103,23 +98,8 @@ export default function RemainderTable({
                       day: "numeric",
                     })}
                   </TableCell>
-                  {/* <TableCell>{reminder.time}</TableCell> */}
                   <TableCell>
                     {getStatusBadge(reminder.reminderStatus)}
-                  </TableCell>
-                  {/* <TableCell>{reminder.notification}</TableCell> */}
-                  <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger>
-                        <MoreHorizontal className="w-4 h-4" />
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent>
-                        <CustomDropDownMenuContent
-                          reminder={reminder}
-                          key={index + Math.random()}
-                        />
-                      </DropdownMenuContent>
-                    </DropdownMenu>
                   </TableCell>
                 </TableRow>
               ))}
@@ -128,38 +108,5 @@ export default function RemainderTable({
         </CardContent>
       </Card>
     </div>
-  );
-}
-
-function CustomDropDownMenuContent({ reminder }: { reminder: Reminder }) {
-  const {
-    execute: deleteReminderAction,
-    isExecuting: isDeletingReminder,
-    hasErrored: hasDeletedReminderError,
-    hasSucceeded: hasDeletedReminder,
-  } = useAction(deleteReminder);
-
-  useEffect(() => {
-    if (hasDeletedReminder) {
-      toast.success("Successfully deleted reminder");
-    }
-    if (hasDeletedReminderError) {
-      toast.error("Error deleting reminder");
-    }
-  }, [hasDeletedReminder, hasDeletedReminderError]);
-
-  return (
-    <>
-      <DropdownMenuItem>Edit</DropdownMenuItem>
-      <DropdownMenuSeparator className="p-0 m-0" />
-      <DropdownMenuItem
-        onClick={() => {
-          deleteReminderAction({ reminderId: reminder.id });
-        }}
-        disabled={isDeletingReminder}
-      >
-        {isDeletingReminder ? <Loader className="animate-spin" /> : "Delete"}
-      </DropdownMenuItem>
-    </>
   );
 }
