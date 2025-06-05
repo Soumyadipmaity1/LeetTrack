@@ -38,7 +38,7 @@ export default function ReminderModal({ isOpen, onClose }: ReminderModalProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-b from-transparent to-black/50 bg-opacity-40 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-gradient-to-b from-transparent to-black/50 bg-opacity-40 flex items-center justify-center z-50 mt-10">
       <div className="bg-white text-black p-6 rounded-lg w-full max-w-md shadow-xl relative">
         <button
           onClick={onClose}

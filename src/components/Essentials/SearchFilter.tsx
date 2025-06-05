@@ -1,22 +1,31 @@
 "use client";
 
 import { Input } from "@/components/ui/input";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Search } from "lucide-react";
 
 export default function SearchFilter() {
   return (
-    
     <div className="p-4 bg-white border rounded">
       <div>
-      <h2 className="text-lg font-bold">Search & Filter</h2>
-        <p className="text-sm text-muted-foreground">Find and filter your reminders</p>
+        <h2 className="text-xl font-bold">Search & Filter</h2>
+        <p className="text-sm text-muted-foreground font-semibold">
+          Find and filter your reminders
+        </p>
       </div>
 
-      <div className="p-4 flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-2 sm:space-y-0">
-        
-        <Input placeholder="Search problems..." className="sm:flex-1" />
+      <div className="mt-2 flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-2 sm:space-y-0">
+        <div className="relative w-full sm:flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-4 w-4" />
+          <Input placeholder="Search problems..." className="pl-8" />
+        </div>
 
-        
         <Select>
           <SelectTrigger className="w-36">
             <SelectValue placeholder="All Status" />
@@ -28,7 +37,6 @@ export default function SearchFilter() {
           </SelectContent>
         </Select>
 
-        
         <Select>
           <SelectTrigger className="w-36">
             <SelectValue placeholder="All Levels" />
@@ -42,5 +50,5 @@ export default function SearchFilter() {
         </Select>
       </div>
     </div>
-   );
+  );
 }
