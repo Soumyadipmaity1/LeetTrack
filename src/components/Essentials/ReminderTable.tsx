@@ -84,7 +84,13 @@ export default function RemainderTable({
                   <TableCell>
                     {getDifficultyBadge(reminder.problemDifficulty)}
                   </TableCell>
-                  <TableCell>{reminder.scheduledDate.toDateString()}</TableCell>
+                  <TableCell>
+                    {reminder.scheduledDate.toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    })}
+                  </TableCell>
                   {/* <TableCell>{reminder.time}</TableCell> */}
                   <TableCell>
                     {getStatusBadge(reminder.reminderStatus)}
