@@ -19,8 +19,11 @@ export default async function Dashboard() {
 
   return (
     <main className="min-h-screen flex flex-col pt-7">
-      {/* Modal for Adding a Reminder */}
-      <ReminderDialog />
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-3xl font-bold">LeetTrack Reminder Dashboard</h1>
+        {/* Modal for Adding a Reminder */}
+        <ReminderDialog />
+      </div>
 
       {/* Stats, Calendar, and Search/Filter */}
       <div className="mb-4">

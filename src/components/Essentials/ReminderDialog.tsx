@@ -18,8 +18,8 @@ export default function AddReminderModal() {
     <Dialog>
       <form>
         <DialogTrigger asChild>
-          <div className="flex items-center justify-between mb-6 ">
-            <Button className="cursor-pointer p-2 flex items-center gap-2">
+          <div className="flex items-center justify-between">
+            <Button className="cursor-pointer flex items-center gap-2">
               <Plus /> Add Reminder
             </Button>
           </div>
