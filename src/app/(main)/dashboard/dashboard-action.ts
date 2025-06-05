@@ -101,9 +101,10 @@ export const deleteReminder = authActionClient
   .schema(deleteReminderSchema)
   .action(async ({ ctx, parsedInput }) => {
     const { reminderId } = parsedInput;
-    return await ctx.db.reminder.delete({
+    await ctx.db.reminder.delete({
       where: {
         id: reminderId,
       },
     });
+    return revalidatePath("/dashboard");
   });
