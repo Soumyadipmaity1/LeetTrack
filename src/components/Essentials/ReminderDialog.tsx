@@ -1,5 +1,6 @@
 "use client";
 
+import { createReminder } from "@/app/(main)/dashboard/dashboard-action";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -14,8 +15,29 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Plus } from "lucide-react";
+import { useAction } from "next-safe-action/hooks";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+
+// https://leetcode.com/problems/(.+)
+const LEETCODE_URL_MATCHER = /https:\/\/leetcode.com\/problems\/(.+)/g;
 
 export default function AddReminderModal() {
+  const [leetcodeLink, setLeetcodeLink] = useState<string>();
+  const [scheduleDate, setScheduleDate] = useState<string>();
+  const { execute, hasErrored, hasSucceeded, isExecuting } =
+    useAction(createReminder);
+
+  useEffect(() => {
+    if (hasSucceeded) {
+      toast.success("Successfully created reminder");
+    }
+
+    if (hasErrored) {
+      toast.error("Error creating reminder");
+    }
+  }, [hasSucceeded, hasErrored]);
+
   return (
     <Dialog>
       <form onSubmit={(e) => e.preventDefault()}>
@@ -40,18 +62,50 @@ export default function AddReminderModal() {
                 id="problem-link"
                 name="Problem Link"
                 placeholder="https://leetcode.com/problems/..."
+                onChange={(e) => {
+                  const url = e.target.value;
+                  if (!url) {
+                    setLeetcodeLink(undefined);
+                    return;
+                  }
+                  if (!url.match(LEETCODE_URL_MATCHER)) {
+                    toast.error("Invalid problem link", {
+                      duration: 1000,
+                    });
+                    return;
+                  }
+                  setLeetcodeLink(e.target.value);
+                }}
               />
             </div>
             <div className="grid gap-3">
               <Label htmlFor="schedule-date">Schedule Date</Label>
-              <Input id="schedule-date" name="schedule-date" type="date" />
+              <Input
+                id="schedule-date"
+                name="schedule-date"
+                type="date"
+                onChange={(e) => setScheduleDate(e.target.value)}
+              />
             </div>
           </div>
           <DialogFooter>
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
             </DialogClose>
-            <Button type="submit">Add</Button>
+            <Button
+              disabled={!leetcodeLink || !scheduleDate}
+              type="submit"
+              onClick={() => {
+                if (leetcodeLink && scheduleDate) {
+                  execute({
+                    problemLink: leetcodeLink,
+                    scheduledDate: new Date(scheduleDate),
+                  });
+                }
+              }}
+            >
+              Add
+            </Button>
           </DialogFooter>
         </DialogContent>
       </form>
