@@ -19,11 +19,11 @@ import { useAction } from "next-safe-action/hooks";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-// https://leetcode.com/problems/(.+)
-const LEETCODE_URL_MATCHER = /https:\/\/leetcode.com\/problems\/(.+)/g;
+// https:\/\/leetcode.com\/problems\/(.+)\/(.+)?
+const LEETCODE_URL_MATCHER = /https:\/\/leetcode.com\/problems\/(.+)\/(.+)?/g;
 
 export default function AddReminderModal() {
-  const [leetcodeLink, setLeetcodeLink] = useState<string>();
+  const [questionTitle, setQuestionTitle] = useState<string>();
   const [scheduleDate, setScheduleDate] = useState<string>();
   const { execute, hasErrored, hasSucceeded, isExecuting } =
     useAction(createReminder);
@@ -65,7 +65,7 @@ export default function AddReminderModal() {
                 onChange={(e) => {
                   const url = e.target.value;
                   if (!url) {
-                    setLeetcodeLink(undefined);
+                    setQuestionTitle(undefined);
                     return;
                   }
                   if (!url.match(LEETCODE_URL_MATCHER)) {
@@ -74,7 +74,7 @@ export default function AddReminderModal() {
                     });
                     return;
                   }
-                  setLeetcodeLink(e.target.value);
+                  setQuestionTitle(LEETCODE_URL_MATCHER.exec(url)?.[1]);
                 }}
               />
             </div>
@@ -95,12 +95,12 @@ export default function AddReminderModal() {
               </Button>
             </DialogClose>
             <Button
-              disabled={!leetcodeLink || !scheduleDate || isExecuting}
+              disabled={!questionTitle || !scheduleDate || isExecuting}
               type="submit"
               onClick={() => {
-                if (leetcodeLink && scheduleDate) {
+                if (questionTitle && scheduleDate) {
                   execute({
-                    problemLink: leetcodeLink,
+                    questionTitle: questionTitle,
                     scheduledDate: new Date(scheduleDate),
                   });
                 }
