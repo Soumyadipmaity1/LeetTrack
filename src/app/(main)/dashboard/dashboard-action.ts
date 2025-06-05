@@ -42,7 +42,7 @@ export const createReminder = authActionClient
   .action(async ({ ctx, parsedInput }) => {
     await ctx.db.reminder.create({
       data: {
-        userId: ctx.user.userId,
+        userId: ctx.user.id,
         ...parsedInput,
       },
     });
@@ -54,7 +54,7 @@ export const getReminders = authActionClient.action(async ({ ctx }) => {
   // and filter them accordingly if needed (refer to prisma schema for details).
   return await ctx.db.reminder.findMany({
     where: {
-      userId: ctx.user.userId,
+      userId: ctx.user.id,
     },
   });
 });
@@ -79,7 +79,7 @@ export const updateReminder = authActionClient
         id: parsedInput.reminderId,
       },
       data: {
-        userId: ctx.user.userId ?? "user_id",
+        userId: ctx.user.id,
         ...parsedInput,
       },
     });
