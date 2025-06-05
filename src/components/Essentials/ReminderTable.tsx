@@ -8,7 +8,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { PROBLEM_DIFFICULTY, Reminder } from "@prisma-client";
+import { Badge } from "@components/ui/badge";
+import { cn } from "@lib/utils";
+import { PROBLEM_DIFFICULTY, Reminder, REMINDER_STATUS } from "@prisma-client";
 import { MoreHorizontal, SquareArrowOutUpRight } from "lucide-react";
 import Link from "next/link";
 
@@ -32,15 +34,17 @@ export default function RemainderTable({
     );
   };
 
-  const getStatusBadge = (status: string) => {
-    const color =
-      status === "Completed"
-        ? "bg-gray-200 text-gray-800"
-        : "bg-black text-white";
+  const getStatusBadge = (status: keyof typeof REMINDER_STATUS) => {
+    const bgStyle =
+      status === "COMPLETED"
+        ? "bg-green-500"
+        : status === "PENDING"
+        ? "bg-red-500"
+        : "bg-gray-600";
     return (
-      <span className={`px-2 py-1 rounded-full text-xs font-semibold ${color}`}>
+      <Badge variant={"secondary"} className={cn("text-white", bgStyle)}>
         {status}
-      </span>
+      </Badge>
     );
   };
 
