@@ -23,6 +23,7 @@ import { toast } from "sonner";
 const LEETCODE_URL_MATCHER = /https:\/\/leetcode\.com\/problems\/([^\/]+)/g;
 
 export default function AddReminderModal() {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [questionTitle, setQuestionTitle] = useState<string>();
   const [scheduleDate, setScheduleDate] = useState<string>();
   const { execute, hasErrored, hasSucceeded, isExecuting } =
@@ -31,6 +32,7 @@ export default function AddReminderModal() {
   useEffect(() => {
     if (hasSucceeded) {
       toast.success("Successfully created reminder");
+      setIsDialogOpen(false);
     }
 
     if (hasErrored) {
@@ -39,78 +41,87 @@ export default function AddReminderModal() {
   }, [hasSucceeded, hasErrored]);
 
   return (
-    <Dialog>
-      <form onSubmit={(e) => e.preventDefault()}>
-        <DialogTrigger asChild>
-          <div className="flex items-center justify-between">
-            <Button className="cursor-pointer flex items-center gap-2">
-              <Plus /> Add Reminder
-            </Button>
-          </div>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Add Reminder</DialogTitle>
-            <DialogDescription>
-              Add a new reminder to your list!
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4">
-            <div className="grid gap-3">
-              <Label htmlFor="problem-link">Problem Link</Label>
-              <Input
-                id="problem-link"
-                name="Problem Link"
-                placeholder="https://leetcode.com/problems/..."
-                onChange={(e) => {
-                  const url = e.target.value;
-                  if (!url) {
-                    setQuestionTitle(undefined);
-                    return;
-                  }
-                  if (!url.match(LEETCODE_URL_MATCHER)) {
-                    toast.error("Invalid problem link", {
-                      duration: 1000,
-                    });
-                    return;
-                  }
-                  setQuestionTitle(LEETCODE_URL_MATCHER.exec(url)?.[1]);
-                }}
-              />
-            </div>
-            <div className="grid gap-3">
-              <Label htmlFor="schedule-date">Schedule Date</Label>
-              <Input
-                id="schedule-date"
-                name="schedule-date"
-                type="date"
-                onChange={(e) => setScheduleDate(e.target.value)}
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline" disabled={isExecuting}>
-                Cancel
-              </Button>
-            </DialogClose>
-            <Button
-              disabled={!questionTitle || !scheduleDate || isExecuting}
-              type="submit"
-              onClick={() => {
-                if (questionTitle && scheduleDate) {
-                  execute({
-                    questionTitle: questionTitle,
-                    scheduledDate: new Date(scheduleDate),
-                  });
+    <Dialog open={isDialogOpen}>
+      <DialogTrigger asChild>
+        <div className="flex items-center justify-between">
+          <Button
+            className="cursor-pointer flex items-center gap-2"
+            onClick={() => {
+              setIsDialogOpen(true);
+            }}
+          >
+            <Plus /> Add Reminder
+          </Button>
+        </div>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Add Reminder</DialogTitle>
+          <DialogDescription>
+            Add a new reminder to your list!
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-4">
+          <div className="grid gap-3">
+            <Label htmlFor="problem-link">Problem Link</Label>
+            <Input
+              id="problem-link"
+              name="Problem Link"
+              placeholder="https://leetcode.com/problems/..."
+              onChange={(e) => {
+                const url = e.target.value;
+                if (!url) {
+                  setQuestionTitle(undefined);
+                  return;
                 }
+                if (!url.match(LEETCODE_URL_MATCHER)) {
+                  toast.error("Invalid problem link", {
+                    duration: 1000,
+                  });
+                  return;
+                }
+                setQuestionTitle(LEETCODE_URL_MATCHER.exec(url)?.[1]);
+              }}
+            />
+          </div>
+          <div className="grid gap-3">
+            <Label htmlFor="schedule-date">Schedule Date</Label>
+            <Input
+              id="schedule-date"
+              name="schedule-date"
+              type="date"
+              onChange={(e) => setScheduleDate(e.target.value)}
+            />
+          </div>
+        </div>
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button
+              variant="outline"
+              disabled={isExecuting}
+              onClick={() => {
+                setIsDialogOpen(false);
               }}
             >
-              {!isExecuting ? "Add" : <Loader2 className="animate-spin" />}
+              Cancel
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </form>
+          </DialogClose>
+          <Button
+            disabled={!questionTitle || !scheduleDate || isExecuting}
+            type="submit"
+            onClick={() => {
+              if (questionTitle && scheduleDate) {
+                execute({
+                  questionTitle: questionTitle,
+                  scheduledDate: new Date(scheduleDate),
+                });
+              }
+            }}
+          >
+            {!isExecuting ? "Add" : <Loader2 className="animate-spin" />}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
     </Dialog>
   );
 }
