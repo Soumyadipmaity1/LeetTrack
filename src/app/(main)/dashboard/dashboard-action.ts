@@ -4,22 +4,22 @@ import { getQuestionOfTheDay, searchQuestion } from "@lib/leetcode";
 import { authActionClient } from "@lib/safe-action";
 import { z } from "zod";
 
-const searchQuestionsSchema = z.object({
-  questionTitle: z.string().optional(),
-  questionTags: z.array(z.string()).optional(),
-  questionDifficulty: z.enum(["EASY", "MEDIUM", "HARD"]).optional(),
-});
+// const searchQuestionsSchema = z.object({
+//   questionTitle: z.string().optional(),
+//   questionTags: z.array(z.string()).optional(),
+//   questionDifficulty: z.enum(["EASY", "MEDIUM", "HARD"]).optional(),
+// });
 
-// Fetching details of leetcode question
-export const searchQuestions = authActionClient
-  .schema(searchQuestionsSchema)
-  .action(async ({ parsedInput }) => {
-    return await searchQuestion({
-      questionTitle: parsedInput.questionTitle,
-      questionTags: parsedInput.questionTags,
-      questionDifficulty: parsedInput.questionDifficulty,
-    });
-  });
+// // Fetching details of leetcode question
+// export const searchQuestions = authActionClient
+//   .schema(searchQuestionsSchema)
+//   .action(async ({ parsedInput }) => {
+//     return await searchQuestion({
+//       questionTitle: parsedInput.questionTitle,
+//       questionTags: parsedInput.questionTags,
+//       questionDifficulty: parsedInput.questionDifficulty,
+//     });
+//   });
 
 // Get QOTD
 export const getQOTD = authActionClient.action(async () => {
@@ -27,12 +27,7 @@ export const getQOTD = authActionClient.action(async () => {
 });
 
 const createReminderSchema = z.object({
-  problemId: z.string().optional(),
-  problemName: z.string().optional(),
-  problemStatement: z.string().optional(),
-  problemTags: z.array(z.string()).optional(),
-  problemDifficulty: z.enum(["EASY", "MEDIUM", "HARD"]).optional(),
-  problemLink: z.string(),
+  questionTitle: z.string(),
   scheduledDate: z.date(),
 });
 
@@ -40,12 +35,18 @@ const createReminderSchema = z.object({
 export const createReminder = authActionClient
   .schema(createReminderSchema)
   .action(async ({ ctx, parsedInput }) => {
-    await ctx.db.reminder.create({
-      data: {
-        userId: ctx.user.id,
-        ...parsedInput,
-      },
+    const { questionTitle } = parsedInput;
+    console.log(questionTitle);
+    const data = await searchQuestion({
+      questionTitle: questionTitle,
     });
+    console.log(data);
+    // await ctx.db.reminder.create({
+    //   data: {
+    //     userId: ctx.user.id,
+    //     ...parsedInput,
+    //   },
+    // });
   });
 
 // Used for fetching reminders for the authenticated user.
