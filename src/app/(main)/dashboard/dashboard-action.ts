@@ -2,6 +2,7 @@
 
 import { getQuestionOfTheDay } from "@lib/leetcode";
 import { authActionClient } from "@lib/safe-action";
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 // const searchQuestionsSchema = z.object({
@@ -43,6 +44,7 @@ export const createReminder = authActionClient
         scheduledDate: scheduledDate,
       },
     });
+    return revalidatePath("/dashboard");
   });
 
 // Used for fetching reminders for the authenticated user.
