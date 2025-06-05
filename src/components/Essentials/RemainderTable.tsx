@@ -8,54 +8,25 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { PROBLEM_DIFFICULTY, Reminder } from "@prisma-client";
 import { MoreHorizontal, SquareArrowOutUpRight } from "lucide-react";
 import Link from "next/link";
 
-type Reminder = {
-  question: string;
-  difficulty: "Easy" | "Medium" | "Hard";
-  date: string;
-  time: string;
-  status: string;
-  notification: string;
-};
-
-export default function RemainderTable() {
-  const reminders: Reminder[] = [
-    {
-      question: "Two Sum",
-      difficulty: "Easy",
-      date: "28/12/2024",
-      time: "09:00",
-      status: "Pending",
-      notification: "Email",
-    },
-    {
-      question: "Add Two Numbers",
-      difficulty: "Medium",
-      date: "29/12/2024",
-      time: "10:30",
-      status: "Completed",
-      notification: "Both",
-    },
-    {
-      question: "Longest Substring Without Repeating Characters",
-      difficulty: "Medium",
-      date: "30/12/2024",
-      time: "14:00",
-      status: "Pending",
-      notification: "Push",
-    },
-  ];
-
-  const getDifficultyBadge = (level: "Easy" | "Medium" | "Hard") => {
+export default function RemainderTable({
+  reminders,
+}: {
+  reminders: Reminder[];
+}) {
+  const getDifficultyBadge = (level: PROBLEM_DIFFICULTY) => {
     const variant = {
-      Easy: "bg-green-100 text-green-600",
-      Medium: "bg-yellow-100 text-yellow-600",
-      Hard: "bg-red-100 text-red-600",
-    }[level];
+      EASY: "bg-green-100 text-green-600",
+      MEDIUM: "bg-yellow-100 text-yellow-600",
+      HARD: "bg-red-100 text-red-600",
+    } as Record<PROBLEM_DIFFICULTY, string>;
     return (
-      <span className={`px-2 py-1 rounded-md text-xs font-medium ${variant}`}>
+      <span
+        className={`px-2 py-1 rounded-md text-xs font-medium ${variant[level]}`}
+      >
         {level}
       </span>
     );
@@ -87,28 +58,34 @@ export default function RemainderTable() {
                 <TableHead>Question</TableHead>
                 <TableHead>Difficulty</TableHead>
                 <TableHead>Scheduled Date</TableHead>
-                <TableHead>Time</TableHead>
+                {/* <TableHead>Time</TableHead> */}
                 <TableHead>Status</TableHead>
-                <TableHead>Notification</TableHead>
+                {/* <TableHead>Notification</TableHead> */}
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody className="text-base">
+            <TableBody className="text-base cursor-pointer">
               {reminders.map((reminder, index) => (
                 <TableRow key={index}>
-                  <TableCell className="flex flex-row gap-2 mt-2 font-semibold">
-                    {reminder.question}
-                    <Link href="#">
+                  <TableCell>
+                    <Link
+                      className="flex flex-row gap-2 font-semibold hover:underline"
+                      href={reminder.problemLink}
+                      target="_blank"
+                    >
+                      {reminder.problemName}
                       <SquareArrowOutUpRight size={10} className="mt-2" />
                     </Link>
                   </TableCell>
                   <TableCell>
-                    {getDifficultyBadge(reminder.difficulty)}
+                    {getDifficultyBadge(reminder.problemDifficulty)}
                   </TableCell>
-                  <TableCell>{reminder.date}</TableCell>
-                  <TableCell>{reminder.time}</TableCell>
-                  <TableCell>{getStatusBadge(reminder.status)}</TableCell>
-                  <TableCell>{reminder.notification}</TableCell>
+                  <TableCell>{reminder.scheduledDate.toDateString()}</TableCell>
+                  {/* <TableCell>{reminder.time}</TableCell> */}
+                  <TableCell>
+                    {getStatusBadge(reminder.reminderStatus)}
+                  </TableCell>
+                  {/* <TableCell>{reminder.notification}</TableCell> */}
                   <TableCell className="text-right">
                     <Button size="icon" variant="ghost">
                       <MoreHorizontal className="w-4 h-4" />
