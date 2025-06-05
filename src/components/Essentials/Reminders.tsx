@@ -42,11 +42,11 @@ const Reminders = ({ reminders }: { reminders: Reminder[] }) => {
     "Completed Questions": reminders.filter(
       (r) => r.reminderStatus === "COMPLETED"
     ).length,
-    "Missed Reminders": 0,
+    "Missed Reminders": reminders.filter(
+      // Missed reminders are those that are pending
+      (r) => r.reminderStatus === "PENDING"
+    ).length,
   };
-  reminderData["Missed Reminders"] =
-    reminderData["Total Reminders"] -
-    (reminderData["Upcoming Reminders"] + reminderData["Completed Questions"]);
 
   const [date, setDate] = React.useState<Date | undefined>(new Date());
 
