@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
 import { useAction } from "next-safe-action/hooks";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -90,10 +90,12 @@ export default function AddReminderModal() {
           </div>
           <DialogFooter>
             <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
+              <Button variant="outline" disabled={isExecuting}>
+                Cancel
+              </Button>
             </DialogClose>
             <Button
-              disabled={!leetcodeLink || !scheduleDate}
+              disabled={!leetcodeLink || !scheduleDate || isExecuting}
               type="submit"
               onClick={() => {
                 if (leetcodeLink && scheduleDate) {
@@ -104,7 +106,7 @@ export default function AddReminderModal() {
                 }
               }}
             >
-              Add
+              {!isExecuting ? "Add" : <Loader2 className="animate-spin" />}
             </Button>
           </DialogFooter>
         </DialogContent>
