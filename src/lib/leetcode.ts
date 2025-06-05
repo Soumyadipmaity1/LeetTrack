@@ -1,15 +1,11 @@
 import axios from "axios";
-import {
-  QuestionOfTheDay,
-  ResponseDataWithTags,
-  ResponseDataWithTitle,
-} from "./types";
+import { QuestionOfTheDay, ResponseDataWithTitle } from "./types";
 const BASE_URL = process.env.LEETCODE_BASE_URL;
 
 type SearchQuestionParams = {
   questionTitle: string | undefined;
-  questionTags: string[] | undefined;
-  questionDifficulty: string | undefined;
+  // questionTags: string[] | undefined;
+  // questionDifficulty: string | undefined;
 };
 
 /**
@@ -25,13 +21,13 @@ export async function searchQuestion(data: SearchQuestionParams) {
     return responseData.data as ResponseDataWithTitle;
   }
 
-  const responseData = await axios.get(
-    `${BASE_URL}/problems?tags=${
-      data.questionTags?.join(",") || ""
-    }&difficulty=${data.questionDifficulty || ""}`
-  );
+  // const responseData = await axios.get(
+  //   `${BASE_URL}/problems?tags=${
+  //     data.questionTags?.join(",") || ""
+  //   }&difficulty=${data.questionDifficulty || ""}`
+  // );
 
-  return responseData.data as ResponseDataWithTags;
+  // return responseData.data as ResponseDataWithTags;
 }
 
 export async function getQuestionOfTheDay() {
