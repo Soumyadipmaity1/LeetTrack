@@ -12,17 +12,9 @@ import {
 import { Badge } from "@components/ui/badge";
 import {
   ContextMenu,
-  ContextMenuCheckboxItem,
   ContextMenuContent,
   ContextMenuItem,
-  ContextMenuLabel,
-  ContextMenuRadioGroup,
-  ContextMenuRadioItem,
   ContextMenuSeparator,
-  ContextMenuShortcut,
-  ContextMenuSub,
-  ContextMenuSubContent,
-  ContextMenuSubTrigger,
   ContextMenuTrigger,
 } from "@components/ui/context-menu";
 import { cn } from "@lib/utils";
@@ -115,7 +107,7 @@ function TableRowContent({ reminder }: { reminder: Reminder }) {
           href={`https://leetcode.com/problems/${reminder.problemName}`}
           target="_blank"
         >
-          {reminder.problemName}
+          {reminder.problemTitle}
           <SquareArrowOutUpRight size={10} className="mt-2" />
         </Link>
       </TableCell>
@@ -137,43 +129,9 @@ function CustomContextMenu({ children }: { children: React.ReactNode }) {
     <ContextMenu>
       <ContextMenuTrigger asChild>{children}</ContextMenuTrigger>
       <ContextMenuContent className="w-52">
-        <ContextMenuItem inset>
-          Back
-          <ContextMenuShortcut>⌘[</ContextMenuShortcut>
-        </ContextMenuItem>
-        <ContextMenuItem inset disabled>
-          Forward
-          <ContextMenuShortcut>⌘]</ContextMenuShortcut>
-        </ContextMenuItem>
-        <ContextMenuItem inset>
-          Reload
-          <ContextMenuShortcut>⌘R</ContextMenuShortcut>
-        </ContextMenuItem>
-        <ContextMenuSub>
-          <ContextMenuSubTrigger inset>More Tools</ContextMenuSubTrigger>
-          <ContextMenuSubContent className="w-44">
-            <ContextMenuItem>Save Page...</ContextMenuItem>
-            <ContextMenuItem>Create Shortcut...</ContextMenuItem>
-            <ContextMenuItem>Name Window...</ContextMenuItem>
-            <ContextMenuSeparator />
-            <ContextMenuItem>Developer Tools</ContextMenuItem>
-            <ContextMenuSeparator />
-            <ContextMenuItem variant="destructive">Delete</ContextMenuItem>
-          </ContextMenuSubContent>
-        </ContextMenuSub>
+        <ContextMenuItem inset>Edit</ContextMenuItem>
         <ContextMenuSeparator />
-        <ContextMenuCheckboxItem checked>
-          Show Bookmarks
-        </ContextMenuCheckboxItem>
-        <ContextMenuCheckboxItem>Show Full URLs</ContextMenuCheckboxItem>
-        <ContextMenuSeparator />
-        <ContextMenuRadioGroup value="pedro">
-          <ContextMenuLabel inset>People</ContextMenuLabel>
-          <ContextMenuRadioItem value="pedro">
-            Pedro Duarte
-          </ContextMenuRadioItem>
-          <ContextMenuRadioItem value="colm">Colm Tuite</ContextMenuRadioItem>
-        </ContextMenuRadioGroup>
+        <ContextMenuItem inset>Delete</ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>
   );
