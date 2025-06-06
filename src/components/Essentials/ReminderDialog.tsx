@@ -27,7 +27,7 @@ const LEETCODE_URL_MATCHER = /https:\/\/leetcode\.com\/problems\/([^\/]+)/g;
 
 export function AddReminderModal() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [questionTitle, setQuestionTitle] = useState<string>();
+  const [problemSlug, setProblemSlug] = useState<string>();
   const [scheduleDate, setScheduleDate] = useState<string>();
   const { execute, hasErrored, hasSucceeded, isExecuting } =
     useAction(createReminder);
@@ -74,7 +74,7 @@ export function AddReminderModal() {
               onChange={(e) => {
                 const url = e.target.value;
                 if (!url) {
-                  setQuestionTitle(undefined);
+                  setProblemSlug(undefined);
                   return;
                 }
                 if (!url.match(LEETCODE_URL_MATCHER)) {
@@ -83,7 +83,7 @@ export function AddReminderModal() {
                   });
                   return;
                 }
-                setQuestionTitle(LEETCODE_URL_MATCHER.exec(url)?.[1]);
+                setProblemSlug(LEETCODE_URL_MATCHER.exec(url)?.[1]);
               }}
             />
           </div>
@@ -108,12 +108,12 @@ export function AddReminderModal() {
             Cancel
           </Button>
           <Button
-            disabled={!questionTitle || !scheduleDate || isExecuting}
+            disabled={!problemSlug || !scheduleDate || isExecuting}
             type="submit"
             onClick={() => {
-              if (questionTitle && scheduleDate) {
+              if (problemSlug && scheduleDate) {
                 execute({
-                  questionTitle: questionTitle,
+                  problemSlug,
                   scheduledDate: new Date(scheduleDate),
                 });
               }

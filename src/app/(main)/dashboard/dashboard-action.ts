@@ -29,7 +29,7 @@ export const getQOTD = authActionClient.action(async () => {
 });
 
 const createReminderSchema = z.object({
-  questionTitle: z.string(),
+  problemSlug: z.string(),
   scheduledDate: z.date(),
 });
 
@@ -37,8 +37,8 @@ const createReminderSchema = z.object({
 export const createReminder = authActionClient
   .schema(createReminderSchema)
   .action(async ({ ctx, parsedInput }) => {
-    const { questionTitle, scheduledDate } = parsedInput;
-    const questionData = await searchQuestion({ questionTitle });
+    const { problemSlug, scheduledDate } = parsedInput;
+    const questionData = await searchQuestion({ questionTitle: problemSlug });
 
     if (!questionData) {
       throw new Error("Question not found!");
@@ -47,7 +47,7 @@ export const createReminder = authActionClient
     await ctx.db.reminder.create({
       data: {
         userId: ctx.user.id,
-        problemSlug: questionTitle,
+        problemSlug,
         problemTitle: questionData.questionTitle,
         scheduledDate: scheduledDate,
         problemDifficulty:
