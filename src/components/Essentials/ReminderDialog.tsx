@@ -127,10 +127,21 @@ export function AddReminderModal() {
   );
 }
 
-export function EditReminderModal({ reminder }: { reminder: Reminder }) {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [problemSlug, setProblemSlug] = useState<string>();
-  const [scheduleDate, setScheduleDate] = useState<string>();
+export function EditReminderModal({
+  reminder,
+  isDialogOpen,
+  setIsDialogOpen,
+}: {
+  reminder: Reminder;
+  isDialogOpen: boolean;
+  setIsDialogOpen: (isOpen: boolean) => void;
+}) {
+  const [problemSlug, setProblemSlug] = useState<string | undefined>(
+    reminder.problemSlug
+  );
+  const [scheduleDate, setScheduleDate] = useState<string | undefined>(
+    reminder.scheduledDate.toISOString()
+  );
   const { execute, hasErrored, hasSucceeded, isExecuting } =
     useAction(updateReminder);
 
@@ -147,24 +158,9 @@ export function EditReminderModal({ reminder }: { reminder: Reminder }) {
 
   return (
     <Dialog open={isDialogOpen}>
-      <DialogTrigger asChild>
-        <div className="flex items-center justify-between">
-          <Button
-            className="cursor-pointer flex items-center gap-2"
-            onClick={() => {
-              setIsDialogOpen(true);
-            }}
-          >
-            <Plus /> Add Reminder
-          </Button>
-        </div>
-      </DialogTrigger>
       <DialogContent showCloseButton={false} className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add Reminder</DialogTitle>
-          <DialogDescription>
-            Add a new reminder to your list!
-          </DialogDescription>
+          <DialogTitle>Edit Reminder</DialogTitle>
         </DialogHeader>
         <div className="grid gap-4">
           <div className="grid gap-3">
@@ -173,6 +169,7 @@ export function EditReminderModal({ reminder }: { reminder: Reminder }) {
               id="problem-link"
               name="Problem Link"
               placeholder="https://leetcode.com/problems/..."
+              defaultValue={"https://leetcode.com/problems/" + problemSlug}
               onChange={(e) => {
                 const url = e.target.value;
                 if (!url) {
@@ -192,6 +189,7 @@ export function EditReminderModal({ reminder }: { reminder: Reminder }) {
           <div className="grid gap-3">
             <Label htmlFor="schedule-date">Schedule Date</Label>
             <Input
+              defaultValue={scheduleDate?.substring(0, 10)}
               id="schedule-date"
               name="schedule-date"
               type="date"
