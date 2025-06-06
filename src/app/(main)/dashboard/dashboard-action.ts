@@ -70,12 +70,7 @@ export const getReminders = authActionClient.action(async ({ ctx }) => {
 
 const updateReminderSchema = z.object({
   reminderId: z.string().cuid(),
-  problemId: z.string().optional(),
-  problemSlug: z.string().optional(),
-  problemStatement: z.string().optional(),
-  problemTags: z.array(z.string()).optional(),
-  problemDifficulty: z.enum(["EASY", "MEDIUM", "HARD"]).optional(),
-  problemLink: z.string(),
+  problemSlug: z.string(),
   scheduledDate: z.date(),
 });
 
@@ -83,13 +78,16 @@ const updateReminderSchema = z.object({
 export const updateReminder = authActionClient
   .schema(updateReminderSchema)
   .action(async ({ ctx, parsedInput }) => {
+    const { problemSlug, scheduledDate, reminderId } = parsedInput;
+
     await ctx.db.reminder.update({
       where: {
-        id: parsedInput.reminderId,
+        id: reminderId,
       },
       data: {
         userId: ctx.user.id,
-        ...parsedInput,
+        scheduledDate,
+        problemSlug: problemSlug,
       },
     });
     return revalidatePath("/dashboard");
