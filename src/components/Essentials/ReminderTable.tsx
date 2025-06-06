@@ -1,5 +1,6 @@
 "use client";
 
+import { deleteReminder } from "@/app/(main)/dashboard/dashboard-action";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Table,
@@ -19,9 +20,11 @@ import {
 } from "@components/ui/context-menu";
 import { cn } from "@lib/utils";
 import { PROBLEM_DIFFICULTY, Reminder, REMINDER_STATUS } from "@prisma-client";
-import { SquareArrowOutUpRight } from "lucide-react";
+import { LoaderIcon, SquareArrowOutUpRight } from "lucide-react";
+import { useAction } from "next-safe-action/hooks";
 import Link from "next/link";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
+import { toast } from "sonner";
 
 export default function RemainderTable({
   reminders,
@@ -47,7 +50,10 @@ export default function RemainderTable({
             </TableHeader>
             <TableBody className="text-base cursor-default">
               {reminders.map((reminder, index) => (
-                <CustomContextMenu key={index + Math.random()}>
+                <CustomContextMenu
+                  key={index + Math.random()}
+                  reminder={reminder}
+                >
                   <TableRow
                     className="cursor-pointer"
                     onClick={() => {
@@ -124,14 +130,47 @@ function TableRowContent({ reminder }: { reminder: Reminder }) {
   );
 }
 
-function CustomContextMenu({ children }: { children: React.ReactNode }) {
+function CustomContextMenu({
+  children,
+  reminder,
+}: {
+  children: React.ReactNode;
+  reminder: Reminder;
+}) {
+  const {
+    execute: executeDeleteReminder,
+    hasErrored: deleteReminderError,
+    hasSucceeded: deleteReminderSuccess,
+    isExecuting: isDeletingReminder,
+  } = useAction(deleteReminder);
+
+  useEffect(() => {
+    if (deleteReminderSuccess) {
+      toast.success("Successfully deleted reminder");
+    }
+    if (deleteReminderError) {
+      toast.error("An error occurred while deleting reminder");
+    }
+  }, [deleteReminderError, deleteReminderSuccess]);
+
   return (
     <ContextMenu>
       <ContextMenuTrigger asChild>{children}</ContextMenuTrigger>
-      <ContextMenuContent className="w-52">
+      <ContextMenuContent className="max-w-fit">
         <ContextMenuItem inset>Edit</ContextMenuItem>
         <ContextMenuSeparator />
-        <ContextMenuItem inset>Delete</ContextMenuItem>
+        <ContextMenuItem
+          inset
+          onClick={() => {
+            executeDeleteReminder({ reminderId: reminder.id });
+          }}
+        >
+          {!isDeletingReminder ? (
+            "Delete"
+          ) : (
+            <LoaderIcon className="animate-spin" />
+          )}
+        </ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>
   );
