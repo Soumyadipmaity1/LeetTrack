@@ -90,6 +90,7 @@ export function AddReminderModal() {
           <div className="grid gap-3">
             <Label htmlFor="schedule-date">Schedule Date</Label>
             <Input
+              min={new Date().toISOString().substring(0, 10)}
               id="schedule-date"
               name="schedule-date"
               type="date"
@@ -189,6 +190,7 @@ export function EditReminderModal({
           <div className="grid gap-3">
             <Label htmlFor="schedule-date">Schedule Date</Label>
             <Input
+              min={new Date().toISOString().substring(0, 10)}
               defaultValue={scheduleDate?.substring(0, 10)}
               id="schedule-date"
               name="schedule-date"
