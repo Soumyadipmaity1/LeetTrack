@@ -38,7 +38,9 @@ export const createReminder = authActionClient
   .schema(createReminderSchema)
   .action(async ({ ctx, parsedInput }) => {
     const { problemSlug, scheduledDate } = parsedInput;
-    const questionData = await searchQuestion({ questionTitle: problemSlug });
+    const questionData = await searchQuestion({
+      questionTitleSlug: problemSlug,
+    });
 
     if (!questionData) {
       throw new Error("Question not found!");

@@ -3,7 +3,7 @@ import { QuestionOfTheDay, ResponseDataWithTitle } from "./types";
 const BASE_URL = process.env.LEETCODE_BASE_URL;
 
 type SearchQuestionParams = {
-  questionTitle: string | undefined;
+  questionTitleSlug: string | undefined;
   // questionTags: string[] | undefined;
   // questionDifficulty: string | undefined;
 };
@@ -13,9 +13,9 @@ type SearchQuestionParams = {
  * https://github.com/alfaarghya/alfa-leetcode-api?tab=readme-ov-file#questions-details
  */
 export async function searchQuestion(data: SearchQuestionParams) {
-  if (data.questionTitle) {
+  if (data.questionTitleSlug) {
     const responseData = await axios.get(
-      `${BASE_URL}/select?titleSlug=${data.questionTitle}`
+      `${BASE_URL}/select?titleSlug=${data.questionTitleSlug}`
     );
 
     return responseData.data as ResponseDataWithTitle;
