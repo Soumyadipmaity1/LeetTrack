@@ -48,6 +48,7 @@ export const createReminder = authActionClient
       data: {
         userId: ctx.user.id,
         problemName: questionTitle,
+        problemTitle: questionData.questionTitle,
         scheduledDate: scheduledDate,
         problemDifficulty:
           questionData.difficulty.toUpperCase() as PROBLEM_DIFFICULTY,
