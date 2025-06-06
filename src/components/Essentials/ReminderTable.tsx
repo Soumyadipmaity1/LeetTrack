@@ -55,11 +55,18 @@ export default function RemainderTable({
             </TableHeader>
             <TableBody className="text-base cursor-default">
               {reminders.map((reminder, index) => (
-                <CustomContextMenu>
-                  <CustomTableRow
-                    reminder={reminder}
-                    key={index + Math.random()}
-                  />
+                <CustomContextMenu key={index + Math.random()}>
+                  <TableRow
+                    className="cursor-pointer"
+                    onClick={() => {
+                      window.open(
+                        `https://leetcode.com/problems/${reminder.problemName}`,
+                        "_blank"
+                      );
+                    }}
+                  >
+                    <TableRowContent reminder={reminder} />
+                  </TableRow>
                 </CustomContextMenu>
               ))}
             </TableBody>
@@ -70,7 +77,7 @@ export default function RemainderTable({
   );
 }
 
-function CustomTableRow({ reminder }: { reminder: Reminder }) {
+function TableRowContent({ reminder }: { reminder: Reminder }) {
   const getDifficultyBadge = useCallback((level: PROBLEM_DIFFICULTY) => {
     const variant = {
       EASY: "bg-green-100 text-green-600",
@@ -101,15 +108,7 @@ function CustomTableRow({ reminder }: { reminder: Reminder }) {
   }, []);
 
   return (
-    <TableRow
-      className="cursor-pointer"
-      onClick={() => {
-        window.open(
-          `https://leetcode.com/problems/${reminder.problemName}`,
-          "_blank"
-        );
-      }}
-    >
+    <>
       <TableCell>
         <Link
           className="flex flex-row gap-2 font-semibold hover:underline"
@@ -129,7 +128,7 @@ function CustomTableRow({ reminder }: { reminder: Reminder }) {
         })}
       </TableCell>
       <TableCell>{getStatusBadge(reminder.reminderStatus)}</TableCell>
-    </TableRow>
+    </>
   );
 }
 
