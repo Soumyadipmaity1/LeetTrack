@@ -8,10 +8,15 @@ import { Save, Smartphone } from "lucide-react";
 import { useState } from "react";
 
 export default function PushNotification({ userData }: { userData: User }) {
-  const [enabled, setEnabled] = useState(false);
-  const [reminder, setReminder] = useState(false);
-  const [streakReminders, setStreakReminders] = useState(false);
-  const [achievement, setAchievement] = useState(false);
+  const [enabled, setEnabled] = useState(
+    userData.preferredNotificationMethod === "PUSH_NOTIFICATION" ||
+      userData.preferredNotificationMethod === "BOTH"
+  );
+  const [reminder, setReminder] = useState(userData.sendReminderNotif);
+  const [streakReminders, setStreakReminders] = useState(
+    userData.sendStreakReminder
+  );
+  const [achievement, setAchievement] = useState(userData.sendAchievementAlert);
 
   return (
     <Card className="max-w-full mt-4">

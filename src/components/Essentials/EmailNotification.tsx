@@ -8,10 +8,13 @@ import { Mail, Save } from "lucide-react";
 import { useState } from "react";
 
 export default function EmailNotifications({ userData }: { userData: User }) {
-  const [enabled, setEnabled] = useState(true);
-  const [reminder, setReminder] = useState(true);
-  const [daily, setDaily] = useState(false);
-  const [weekly, setWeekly] = useState(false);
+  const [enabled, setEnabled] = useState(
+    userData.preferredNotificationMethod === "EMAIL" ||
+      userData.preferredNotificationMethod === "BOTH"
+  );
+  const [reminder, setReminder] = useState(userData.sendReminder);
+  const [daily, setDaily] = useState(userData.sendDailyDigest);
+  const [weekly, setWeekly] = useState(userData.sendWeeklyReport);
 
   return (
     <Card className="max-w-full">
