@@ -2,7 +2,7 @@
 
 import { getQuestionOfTheDay, searchQuestion } from "@lib/leetcode";
 import { authActionClient } from "@lib/safe-action";
-import { PROBLEM_DIFFICULTY } from "@prisma-client";
+import { PROBLEM_DIFFICULTY, REMINDER_STATUS } from "@prisma-client";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
@@ -74,13 +74,15 @@ const updateReminderSchema = z.object({
   reminderId: z.string().cuid(),
   problemSlug: z.string(),
   scheduledDate: z.date(),
+  reminderStatus: z.nativeEnum(REMINDER_STATUS),
 });
 
 // Used for updating a reminder.
 export const updateReminder = authActionClient
   .schema(updateReminderSchema)
   .action(async ({ ctx, parsedInput }) => {
-    const { problemSlug, scheduledDate, reminderId } = parsedInput;
+    const { problemSlug, scheduledDate, reminderId, reminderStatus } =
+      parsedInput;
     const questionData = await searchQuestion({
       questionTitleSlug: problemSlug,
     });
@@ -100,6 +102,7 @@ export const updateReminder = authActionClient
         problemTitle: questionData.questionTitle,
         problemDifficulty:
           questionData.difficulty.toUpperCase() as PROBLEM_DIFFICULTY,
+        reminderStatus,
       },
     });
     return revalidatePath("/dashboard");

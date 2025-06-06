@@ -16,7 +16,16 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Reminder } from "@prisma-client";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@components/ui/select";
+import { Reminder, REMINDER_STATUS } from "@prisma-client";
 import { Loader2, Plus } from "lucide-react";
 import { useAction } from "next-safe-action/hooks";
 import { useEffect, useState } from "react";
@@ -143,6 +152,9 @@ export function EditReminderModal({
   const [scheduleDate, setScheduleDate] = useState<string | undefined>(
     reminder.scheduledDate.toISOString()
   );
+  const [reminderStatus, setReminderStatus] = useState<REMINDER_STATUS>(
+    reminder.reminderStatus
+  );
   const { execute, hasErrored, hasSucceeded, isExecuting } =
     useAction(updateReminder);
 
@@ -198,6 +210,31 @@ export function EditReminderModal({
               onChange={(e) => setScheduleDate(e.target.value)}
             />
           </div>
+          <div className="grid gap-3">
+            {/* <Label htmlFor="reminder-status">Reminder Status</Label>
+            <Input id="reminder-status" name="Problem Link" /> */}
+            <Label htmlFor="reminder-status">Reminder Status</Label>
+            <Select
+              name="reminder-status"
+              defaultValue={reminderStatus}
+              autoComplete="on"
+              onValueChange={(v) => {
+                setReminderStatus(v as REMINDER_STATUS);
+              }}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select reminder status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Status</SelectLabel>
+                  <SelectItem value="UPCOMING">Upcoming</SelectItem>
+                  <SelectItem value="PENDING">Pending</SelectItem>
+                  <SelectItem value="COMPLETED">Completed</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
         <DialogFooter>
           <Button
@@ -218,6 +255,7 @@ export function EditReminderModal({
                   reminderId: reminder.id,
                   problemSlug: problemSlug,
                   scheduledDate: new Date(scheduleDate),
+                  reminderStatus: reminderStatus,
                 });
               }
             }}
