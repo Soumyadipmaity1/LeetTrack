@@ -55,7 +55,7 @@ model Reminder {
 
   // Details of the problem
   // Leetcode Link: https://leetcode.com/problems/problem-name
-  problemName       String
+  problemSlug       String
   problemTitle      String
   problemDifficulty PROBLEM_DIFFICULTY @default(EASY)
 
@@ -68,5 +68,5 @@ model Reminder {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([userId, problemName])
+  @@index([userId, problemSlug])
 }

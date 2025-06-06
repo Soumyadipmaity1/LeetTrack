@@ -42,7 +42,7 @@ interface SessionCreateParams {
 interface ReminderCreateParams {
   userId: string;
   problemId?: string;
-  problemName?: string;
+  problemSlug?: string;
   problemStatement?: string;
   problemTags?: string[];
   problemDifficulty?: PROBLEM_DIFFICULTY;
@@ -456,7 +456,7 @@ async function createReminder(params: ReminderCreateParams) {
   const {
     userId,
     problemId,
-    problemName,
+    problemSlug,
     problemStatement,
     problemTags = [],
     problemDifficulty = PROBLEM_DIFFICULTY.EASY,
@@ -469,7 +469,7 @@ async function createReminder(params: ReminderCreateParams) {
     data: {
       userId,
       problemId,
-      problemName,
+      problemSlug,
       problemStatement,
       problemTags,
       problemDifficulty,
@@ -480,7 +480,7 @@ async function createReminder(params: ReminderCreateParams) {
   });
 
   console.log(
-    `⏰ Created reminder: ${problemName} (${problemDifficulty}) for ${scheduledDate.toLocaleDateString()}`
+    `⏰ Created reminder: ${problemSlug} (${problemDifficulty}) for ${scheduledDate.toLocaleDateString()}`
   );
   return reminder;
 }
@@ -585,7 +585,7 @@ async function createRemindersForUser(
       await createReminder({
         userId,
         problemId: problem.id,
-        problemName: problem.name,
+        problemSlug: problem.name,
         problemStatement: problem.statement,
         problemTags: problem.tags,
         problemDifficulty: problem.difficulty,

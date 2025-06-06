@@ -47,7 +47,7 @@ export const createReminder = authActionClient
     await ctx.db.reminder.create({
       data: {
         userId: ctx.user.id,
-        problemName: questionTitle,
+        problemSlug: questionTitle,
         problemTitle: questionData.questionTitle,
         scheduledDate: scheduledDate,
         problemDifficulty:
@@ -71,7 +71,7 @@ export const getReminders = authActionClient.action(async ({ ctx }) => {
 const updateReminderSchema = z.object({
   reminderId: z.string().cuid(),
   problemId: z.string().optional(),
-  problemName: z.string().optional(),
+  problemSlug: z.string().optional(),
   problemStatement: z.string().optional(),
   problemTags: z.array(z.string()).optional(),
   problemDifficulty: z.enum(["EASY", "MEDIUM", "HARD"]).optional(),

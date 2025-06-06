@@ -52,7 +52,7 @@ export default function RemainderTable({
                     className="cursor-pointer"
                     onClick={() => {
                       window.open(
-                        `https://leetcode.com/problems/${reminder.problemName}`,
+                        `https://leetcode.com/problems/${reminder.problemSlug}`,
                         "_blank"
                       );
                     }}
@@ -104,7 +104,7 @@ function TableRowContent({ reminder }: { reminder: Reminder }) {
       <TableCell>
         <Link
           className="flex flex-row gap-2 font-semibold hover:underline"
-          href={`https://leetcode.com/problems/${reminder.problemName}`}
+          href={`https://leetcode.com/problems/${reminder.problemSlug}`}
           target="_blank"
         >
           {reminder.problemTitle}
