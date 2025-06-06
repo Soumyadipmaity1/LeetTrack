@@ -3,14 +3,13 @@
 import { AddReminderModal } from "@components/Essentials/ReminderDialog";
 import Reminders from "@components/Essentials/Reminders";
 import ReminderTable from "@components/Essentials/ReminderTable";
-import { toast } from "sonner";
 import { getReminders } from "./dashboard-action";
 
 export default async function Dashboard() {
   const receivedData = await getReminders();
 
   if (receivedData?.serverError) {
-    return toast.error("An error occurred while fetching reminders.");
+    return <>An error occurred while fetching reminders.</>;
   }
 
   if (!receivedData?.data) {
