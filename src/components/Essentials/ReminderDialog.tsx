@@ -220,7 +220,7 @@ export function EditReminderModal({
               }
             }}
           >
-            {!isExecuting ? "Add" : <Loader2 className="animate-spin" />}
+            {!isExecuting ? "Update" : <Loader2 className="animate-spin" />}
           </Button>
         </DialogFooter>
       </DialogContent>

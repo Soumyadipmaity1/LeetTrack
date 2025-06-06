@@ -23,8 +23,9 @@ import { PROBLEM_DIFFICULTY, Reminder, REMINDER_STATUS } from "@prisma-client";
 import { LoaderIcon, SquareArrowOutUpRight } from "lucide-react";
 import { useAction } from "next-safe-action/hooks";
 import Link from "next/link";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
+import { EditReminderModal } from "./ReminderDialog";
 
 export default function RemainderTable({
   reminders,
@@ -137,6 +138,7 @@ function CustomContextMenu({
   children: React.ReactNode;
   reminder: Reminder;
 }) {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const {
     execute: executeDeleteReminder,
     hasErrored: deleteReminderError,
@@ -154,24 +156,33 @@ function CustomContextMenu({
   }, [deleteReminderError, deleteReminderSuccess]);
 
   return (
-    <ContextMenu>
-      <ContextMenuTrigger asChild>{children}</ContextMenuTrigger>
-      <ContextMenuContent className="max-w-fit">
-        <ContextMenuItem inset>Edit</ContextMenuItem>
-        <ContextMenuSeparator />
-        <ContextMenuItem
-          inset
-          onClick={() => {
-            executeDeleteReminder({ reminderId: reminder.id });
-          }}
-        >
-          {!isDeletingReminder ? (
-            "Delete"
-          ) : (
-            <LoaderIcon className="animate-spin" />
-          )}
-        </ContextMenuItem>
-      </ContextMenuContent>
-    </ContextMenu>
+    <>
+      <ContextMenu>
+        <ContextMenuTrigger asChild>{children}</ContextMenuTrigger>
+        <ContextMenuContent className="max-w-fit">
+          <ContextMenuItem inset onClick={() => setIsDialogOpen(true)}>
+            Edit
+          </ContextMenuItem>
+          <ContextMenuSeparator />
+          <ContextMenuItem
+            inset
+            onClick={() => {
+              executeDeleteReminder({ reminderId: reminder.id });
+            }}
+          >
+            {!isDeletingReminder ? (
+              "Delete"
+            ) : (
+              <LoaderIcon className="animate-spin" />
+            )}
+          </ContextMenuItem>
+        </ContextMenuContent>
+      </ContextMenu>
+      <EditReminderModal
+        reminder={reminder}
+        isDialogOpen={isDialogOpen}
+        setIsDialogOpen={setIsDialogOpen}
+      />
+    </>
   );
 }

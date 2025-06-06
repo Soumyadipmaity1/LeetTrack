@@ -81,6 +81,13 @@ export const updateReminder = authActionClient
   .schema(updateReminderSchema)
   .action(async ({ ctx, parsedInput }) => {
     const { problemSlug, scheduledDate, reminderId } = parsedInput;
+    const questionData = await searchQuestion({
+      questionTitleSlug: problemSlug,
+    });
+
+    if (!questionData) {
+      throw new Error("Question not found!");
+    }
 
     await ctx.db.reminder.update({
       where: {
@@ -90,6 +97,9 @@ export const updateReminder = authActionClient
         userId: ctx.user.id,
         scheduledDate,
         problemSlug: problemSlug,
+        problemTitle: questionData.questionTitle,
+        problemDifficulty:
+          questionData.difficulty.toUpperCase() as PROBLEM_DIFFICULTY,
       },
     });
     return revalidatePath("/dashboard");
