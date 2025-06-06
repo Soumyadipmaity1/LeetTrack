@@ -1,13 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import CalendarActions from "@components/Essentials/CalendarAction";
 import CalendarMonth from "@components/Essentials/CalendarMonth";
 import MonthNavigator from "@components/Essentials/MonthNavigator";
-import CalendarActions from "@components/Essentials/CalendarAction";
 import { CalendarIcon } from "lucide-react";
+import { useState } from "react";
 
 export default function CalendarPage() {
-
   const [currentDate, setCurrentDate] = useState(new Date());
   const goToPreviousMonth = () => {
     setCurrentDate(
@@ -21,7 +20,6 @@ export default function CalendarPage() {
     );
   };
 
-  
   const goToToday = () => {
     setCurrentDate(new Date());
   };
@@ -31,8 +29,7 @@ export default function CalendarPage() {
   };
 
   return (
-    <div className="pt-20 px-6">
-      
+    <div className="pt-4 px-6">
       <div className="mb-2 flex items-center space-x-2">
         <CalendarIcon className="w-6 h-6" />
         <h1 className="text-2xl font-semibold">Calendar View</h1>
@@ -51,6 +48,6 @@ export default function CalendarPage() {
         />
       </div>
       <CalendarMonth currentMonth={currentDate} reminders={[]} />
-</div>
-);
+    </div>
+  );
 }
