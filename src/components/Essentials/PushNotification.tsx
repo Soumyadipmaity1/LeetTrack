@@ -3,10 +3,11 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
+import { User } from "@prisma-client";
 import { Save, Smartphone } from "lucide-react";
 import { useState } from "react";
 
-export default function PushNotification() {
+export default function PushNotification({ userData }: { userData: User }) {
   const [enabled, setEnabled] = useState(false);
   const [reminder, setReminder] = useState(false);
   const [streakReminders, setStreakReminders] = useState(false);

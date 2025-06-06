@@ -3,10 +3,11 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
+import { User } from "@prisma-client";
 import { Mail, Save } from "lucide-react";
 import { useState } from "react";
 
-export default function EmailNotifications() {
+export default function EmailNotifications({ userData }: { userData: User }) {
   const [enabled, setEnabled] = useState(true);
   const [reminder, setReminder] = useState(true);
   const [daily, setDaily] = useState(false);
