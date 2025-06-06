@@ -11,6 +11,7 @@ datasource db {
 enum NOTIFICATION_METHOD {
   EMAIl
   PUSH_NOTIFICATION // For browser notifications
+  BOTH // Email and Push Notification
 }
 
 model User {
@@ -19,14 +20,20 @@ model User {
   email          String @unique
   phoneNumber    String @unique
 
-  username         String
-  profileImage     String
-  leetCodeUsername String @unique @default(cuid())
-
-  bio   String @default("")
-  goals String @default("")
+  username     String
+  profileImage String
 
   preferredNotificationMethod NOTIFICATION_METHOD @default(EMAIl)
+
+  // Email Reminders
+  sendReminder     Boolean @default(true)
+  sendDailyDigest  Boolean @default(false)
+  sendWeeklyReport Boolean @default(false)
+
+  // Push Notifications
+  sendReminderNotif    Boolean @default(false)
+  sendAchievementAlert Boolean @default(false)
+  sendStreakReminder   Boolean @default(false)
 
   // User can set multiple reminders
   reminder Reminder[]
