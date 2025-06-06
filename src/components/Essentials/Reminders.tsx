@@ -50,7 +50,7 @@ const Reminders = ({ reminders }: { reminders: Reminder[] }) => {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
 
   return (
-    <div>
+    <div className="max-w-full">
       <div className="gap-3 flex">
         {/* Stat Cards */}
         {Object.entries(reminderData).map(([label, value]) => {
