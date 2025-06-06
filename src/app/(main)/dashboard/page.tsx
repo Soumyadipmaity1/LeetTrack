@@ -1,6 +1,6 @@
 "use server";
 
-import ReminderDialog from "@components/Essentials/ReminderDialog";
+import { AddReminderModal } from "@components/Essentials/ReminderDialog";
 import Reminders from "@components/Essentials/Reminders";
 import ReminderTable from "@components/Essentials/ReminderTable";
 import { toast } from "sonner";
@@ -22,7 +22,7 @@ export default async function Dashboard() {
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-bold">LeetTrack Reminder Dashboard</h1>
         {/* Modal for Adding a Reminder */}
-        <ReminderDialog />
+        <AddReminderModal />
       </div>
 
       {/* Stats, Calendar, and Search/Filter */}
