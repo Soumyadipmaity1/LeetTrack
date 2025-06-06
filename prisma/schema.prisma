@@ -9,7 +9,7 @@ datasource db {
 }
 
 enum NOTIFICATION_METHOD {
-  EMAIl
+  EMAIL
   PUSH_NOTIFICATION // For browser notifications
   BOTH // Email and Push Notification
 }
@@ -23,7 +23,7 @@ model User {
   username     String
   profileImage String
 
-  preferredNotificationMethod NOTIFICATION_METHOD @default(EMAIl)
+  preferredNotificationMethod NOTIFICATION_METHOD @default(EMAIL)
 
   // Email Reminders
   sendReminder     Boolean @default(true)
