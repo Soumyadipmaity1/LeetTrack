@@ -8,15 +8,15 @@ function getEmail(emails: any[]) {
   if (data) {
     return data.email_address ?? "Unknown";
   }
-  return "Unknown";
+  return "Unknown" + Math.random();
 }
 
 function getPhoneNumber(phone: any[]) {
   const data = phone[phone.length - 1];
   if (data) {
-    return data.phone_number ?? "Unknown";
+    return data.phone_number ?? "Unknown" + Math.random();
   }
-  return "Unknown";
+  return "Unknown" + Math.random();
 }
 
 export async function POST(req: Request) {
@@ -69,12 +69,6 @@ export async function POST(req: Request) {
     await db.user.create({
       data: {
         externalUserId: evt.data.id,
-        profileImage: evt.data.image_url,
-        username:
-          evt.data.username ??
-          evt.data.first_name ??
-          evt.data.last_name ??
-          "Unknown",
         email: getEmail(evt.data.email_addresses),
         phoneNumber: getPhoneNumber(evt.data.phone_numbers),
         createdAt: new Date(evt.data.created_at),
@@ -97,12 +91,6 @@ export async function POST(req: Request) {
         externalUserId: evt.data.id,
       },
       data: {
-        profileImage: evt.data.image_url,
-        username:
-          evt.data.username ??
-          evt.data.first_name ??
-          evt.data.last_name ??
-          "Unknown",
         email: getEmail(evt.data.email_addresses),
         phoneNumber: getPhoneNumber(evt.data.phone_numbers),
       },

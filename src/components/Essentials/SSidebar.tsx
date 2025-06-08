@@ -36,7 +36,7 @@ export function SSidebar() {
               {elements.map((ele) => (
                 <SidebarMenuItem key={ele.title}>
                   <SidebarMenuButton asChild>
-                    <Link href={ele.url} prefetch={true}>
+                    <Link href={ele.url} prefetch>
                       <span>{ele.title}</span>
                     </Link>
                   </SidebarMenuButton>

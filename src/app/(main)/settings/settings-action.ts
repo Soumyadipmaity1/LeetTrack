@@ -1,33 +1,45 @@
 "use server";
 
 import { authActionClient } from "@lib/safe-action";
-import { NOTIFICATION_METHOD } from "@prisma-client";
+import { revalidatePath } from "next/cache";
 import z from "zod";
 
-const updateUserProfileSchema = z.object({
-  leetCodeUsername: z.string().optional(),
-  bio: z.string().optional(),
-  goals: z.string().optional(),
+export const getSettings = authActionClient.action(async ({ ctx }) => {
+  return await ctx.db.user.findUnique({
+    where: { externalUserId: ctx.user.externalUserId },
+  });
 });
 
-export const updateUserProfile = authActionClient
-  .schema(updateUserProfileSchema)
+const updateEmailNotificationSettingsSchema = z.object({
+  sendEmailReminder: z.boolean(),
+  sendUpcomingReminder: z.boolean(),
+  sendDailyDigest: z.boolean(),
+  sendWeeklyReport: z.boolean(),
+});
+
+export const updateEmailNotificationSettings = authActionClient
+  .schema(updateEmailNotificationSettingsSchema)
   .action(async ({ ctx, parsedInput }) => {
-    return await ctx.db.user.update({
-      where: { id: ctx.user.userId },
-      data: { ...parsedInput },
+    await ctx.db.user.update({
+      where: { externalUserId: ctx.user.externalUserId },
+      data: parsedInput,
     });
+    return revalidatePath("/settings");
   });
 
-const updateNotificationSettingsSchema = z.object({
-  preferredNotificationMethod: z.nativeEnum(NOTIFICATION_METHOD),
+const updateNotifSettingsSchema = z.object({
+  sendNotifReminder: z.boolean(),
+  sendUpcomingNotifReminder: z.boolean(),
+  sendAchievementAlert: z.boolean(),
+  sendStreakReminder: z.boolean(),
 });
 
-export const updateNotificationSettings = authActionClient
-  .schema(updateNotificationSettingsSchema)
+export const updateNotifSettings = authActionClient
+  .schema(updateNotifSettingsSchema)
   .action(async ({ ctx, parsedInput }) => {
-    return await ctx.db.user.update({
-      where: { id: ctx.user.userId },
-      data: { ...parsedInput },
+    await ctx.db.user.update({
+      where: { externalUserId: ctx.user.externalUserId },
+      data: parsedInput,
     });
+    return revalidatePath("/settings");
   });
