@@ -1,12 +1,17 @@
-import { auth } from "@clerk/nextjs/server";
+import { useUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
+import { useEffect } from "react";
 
-export default async function Page() {
-  const session = await auth();
+export default function Page() {
+  const { user } = useUser();
 
-  if (!session) {
-    return redirect("/login");
-  } else {
-    return redirect("/dashboard");
-  }
+  useEffect(() => {
+    if (!user) {
+      redirect("/login");
+    } else {
+      redirect("/signup");
+    }
+  }, [user]);
+
+  return <>Loading</>;
 }
