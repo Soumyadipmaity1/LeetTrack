@@ -56,7 +56,14 @@ export default function RemainderTable({
                   reminder={reminder}
                 >
                   <TableRow
-                    className="cursor-pointer"
+                    className={cn(
+                      "cursor-pointer"
+                      // reminder.reminderStatus === "COMPLETED"
+                      //   ? "opacity-50"
+                      //   : reminder.reminderStatus === "UPCOMING"
+                      //   ? "opacity-75"
+                      //   : ""
+                    )}
                     onClick={() => {
                       window.open(
                         `https://leetcode.com/problems/${reminder.problemSlug}`,
