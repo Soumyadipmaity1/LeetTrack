@@ -8,15 +8,15 @@ function getEmail(emails: any[]) {
   if (data) {
     return data.email_address ?? "Unknown";
   }
-  return "Unknown";
+  return "Unknown" + Math.random();
 }
 
 function getPhoneNumber(phone: any[]) {
   const data = phone[phone.length - 1];
   if (data) {
-    return data.phone_number ?? "Unknown";
+    return data.phone_number ?? "Unknown" + Math.random();
   }
-  return "Unknown";
+  return "Unknown" + Math.random();
 }
 
 export async function POST(req: Request) {
