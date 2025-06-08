@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { User } from "@prisma-client";
-import { Loader2, Save, Smartphone } from "lucide-react";
+import { Loader2, Smartphone } from "lucide-react";
 import { useAction } from "next-safe-action/hooks";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -129,14 +129,7 @@ function SaveNotificationSettingsButton({
         })
       }
     >
-      {!isExecuting ? (
-        <>
-          <Save />
-          Save Notification Settings
-        </>
-      ) : (
-        <Loader2 className="animate-spin" />
-      )}
+      {!isExecuting ? "Save" : <Loader2 className="animate-spin" />}
     </Button>
   );
 }
