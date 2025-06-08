@@ -1,18 +1,18 @@
 "use client";
 
+import { updateEmailNotificationSettings } from "@/app/(main)/settings/settings-action";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { User } from "@prisma-client";
-import { Mail, Save } from "lucide-react";
-import { useState } from "react";
+import { Loader2, Mail, Save } from "lucide-react";
+import { useAction } from "next-safe-action/hooks";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export default function EmailNotifications({ userData }: { userData: User }) {
-  const [enabled, setEnabled] = useState(
-    userData.preferredNotificationMethod === "EMAIL" ||
-      userData.preferredNotificationMethod === "BOTH"
-  );
-  const [reminder, setReminder] = useState(userData.sendReminder);
+  const [enabled, setEnabled] = useState(userData.sendEmailReminder);
+  const [reminder, setReminder] = useState(userData.sendUpcomingReminder);
   const [daily, setDaily] = useState(userData.sendDailyDigest);
   const [weekly, setWeekly] = useState(userData.sendWeeklyReport);
 
@@ -75,12 +75,64 @@ export default function EmailNotifications({ userData }: { userData: User }) {
           <Button variant="outline" className="mb-4">
             Send Test Email
           </Button>
-          <Button className="rounded">
-            <Save />
-            Save Notification Settings
-          </Button>
+          <SaveNotificationSettingsButton
+            enabled={enabled}
+            reminder={reminder}
+            daily={daily}
+            weekly={weekly}
+          />
         </div>
       </CardContent>
     </Card>
+  );
+}
+
+function SaveNotificationSettingsButton({
+  enabled,
+  reminder,
+  daily,
+  weekly,
+}: {
+  enabled: boolean;
+  reminder: boolean;
+  daily: boolean;
+  weekly: boolean;
+}) {
+  const { execute, hasErrored, hasSucceeded, isExecuting } = useAction(
+    updateEmailNotificationSettings
+  );
+
+  useEffect(() => {
+    if (hasSucceeded) {
+      toast.success("Successfully updated notification settings");
+    }
+
+    if (hasErrored) {
+      toast.error("Error updating notification settings");
+    }
+  }, [hasSucceeded, hasErrored]);
+
+  return (
+    <Button
+      disabled={isExecuting}
+      className="rounded"
+      onClick={() => {
+        execute({
+          sendEmailReminder: enabled,
+          sendUpcomingReminder: reminder,
+          sendDailyDigest: daily,
+          sendWeeklyReport: weekly,
+        });
+      }}
+    >
+      {!isExecuting ? (
+        <>
+          <Save />
+          Save Notification Settings
+        </>
+      ) : (
+        <Loader2 className="animate-spin" />
+      )}
+    </Button>
   );
 }
