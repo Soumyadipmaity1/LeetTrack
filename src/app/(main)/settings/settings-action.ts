@@ -12,13 +12,13 @@ export const updateNotificationSettings = authActionClient
   .schema(updateNotificationSettingsSchema)
   .action(async ({ ctx, parsedInput }) => {
     return await ctx.db.user.update({
-      where: { id: ctx.user.id },
+      where: { externalUserId: ctx.user.externalUserId },
       data: { ...parsedInput },
     });
   });
 
 export const getSettings = authActionClient.action(async ({ ctx }) => {
   return await ctx.db.user.findUnique({
-    where: { id: ctx.user.id },
+    where: { externalUserId: ctx.user.externalUserId },
   });
 });
