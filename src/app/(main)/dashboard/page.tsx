@@ -12,10 +12,6 @@ export default async function Dashboard() {
     return <>An error occurred while fetching reminders.</>;
   }
 
-  if (!receivedData?.data) {
-    return <>Create a new reminder!</>;
-  }
-
   return (
     <main className="min-h-screen flex flex-col pt-7">
       <div className="flex items-center justify-between mb-6">
@@ -27,7 +23,7 @@ export default async function Dashboard() {
       {/* Stats, Calendar, and Search/Filter */}
       <div className="mb-4">
         {/* Place your stats and calendar components here if you have them */}
-        <Reminders reminders={receivedData.data} />
+        <Reminders reminders={receivedData?.data || []} />
       </div>
 
       {/* Search & Filter */}
@@ -38,7 +34,7 @@ export default async function Dashboard() {
       {/* Reminders Table */}
       <div className="mb-5">
         {/* If you want to use the custom ReminderTable, replace <Reminders /> with */}
-        <ReminderTable reminders={receivedData.data} />
+        <ReminderTable reminders={receivedData?.data || []} />
       </div>
     </main>
   );
