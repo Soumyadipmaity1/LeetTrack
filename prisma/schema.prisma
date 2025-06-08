@@ -15,20 +15,16 @@ enum NOTIFICATION_METHOD {
 }
 
 model User {
-  id             String @id @default(cuid())
-  externalUserId String @unique
+  externalUserId String @id
   email          String @unique
   phoneNumber    String @unique
-
-  username     String
-  profileImage String
 
   preferredNotificationMethod NOTIFICATION_METHOD @default(EMAIL)
 
   // Email Reminders
   sendReminder     Boolean @default(true)
-  sendDailyDigest  Boolean @default(false)
-  sendWeeklyReport Boolean @default(false)
+  sendDailyDigest  Boolean @default(true)
+  sendWeeklyReport Boolean @default(true)
 
   // Push Notifications
   sendReminderNotif    Boolean @default(false)
@@ -69,7 +65,7 @@ model Reminder {
   // Date when the reminder will be sent
   scheduledDate DateTime
 
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [externalUserId], onDelete: Cascade)
   userId String
 
   createdAt DateTime @default(now())
