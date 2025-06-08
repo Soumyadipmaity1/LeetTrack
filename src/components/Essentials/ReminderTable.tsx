@@ -120,6 +120,7 @@ function TableRowContent({ reminder }: { reminder: Reminder }) {
           className="flex flex-row gap-2 font-semibold hover:underline"
           href={`https://leetcode.com/problems/${reminder.problemSlug}`}
           target="_blank"
+          prefetch
         >
           {reminder.problemTitle}
           <SquareArrowOutUpRight size={10} className="mt-2" />

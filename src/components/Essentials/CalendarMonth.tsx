@@ -10,6 +10,7 @@ import {
   startOfMonth,
   startOfWeek,
 } from "date-fns";
+import Link from "next/link";
 import React from "react";
 
 type CalendarProps = {
@@ -55,18 +56,21 @@ export default function CalendarMonth({
         </div>
 
         {dayReminders.map((reminder, idx) => (
-          <div
+          <Link
+            href={`/problems/${reminder.problemSlug}`}
+            target="_blank"
             key={idx}
-            className={`text-xs truncate ${
+            className={`text-xs truncate cursor-pointer ${
               reminder.reminderStatus === "PENDING"
                 ? "text-red-600"
                 : reminder.reminderStatus === "COMPLETED"
                 ? "text-green-600"
                 : "text-yellow-600"
             }`}
+            prefetch
           >
             • {reminder.problemTitle}
-          </div>
+          </Link>
         ))}
       </div>
     );
