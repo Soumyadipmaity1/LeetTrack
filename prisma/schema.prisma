@@ -8,23 +8,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum NOTIFICATION_METHOD {
-  EMAIL
-  PUSH_NOTIFICATION // For browser notifications
-  BOTH // Email and Push Notification
-}
-
 model User {
   externalUserId String @id
   email          String @unique
   phoneNumber    String @unique
 
-  preferredNotificationMethod NOTIFICATION_METHOD @default(EMAIL)
-
   // Email Reminders
-  sendReminder     Boolean @default(true)
-  sendDailyDigest  Boolean @default(true)
-  sendWeeklyReport Boolean @default(true)
+  sendEmailReminder    Boolean @default(true)
+  sendUpcomingReminder Boolean @default(true)
+  sendDailyDigest      Boolean @default(true)
+  sendWeeklyReport     Boolean @default(true)
 
   // Push Notifications
   sendReminderNotif    Boolean @default(false)
