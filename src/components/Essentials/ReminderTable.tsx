@@ -57,12 +57,12 @@ export default function RemainderTable({
                 >
                   <TableRow
                     className={cn(
-                      "cursor-pointer"
-                      // reminder.reminderStatus === "COMPLETED"
-                      //   ? "opacity-50"
-                      //   : reminder.reminderStatus === "UPCOMING"
-                      //   ? "opacity-75"
-                      //   : ""
+                      "cursor-pointer",
+                      reminder.reminderStatus === "COMPLETED"
+                        ? "opacity-50"
+                        : reminder.reminderStatus === "UPCOMING"
+                        ? "opacity-75"
+                        : ""
                     )}
                     onClick={() => {
                       window.open(
