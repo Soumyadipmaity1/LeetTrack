@@ -3,10 +3,22 @@
 import CalendarActions from "@components/Essentials/CalendarAction";
 import CalendarMonth from "@components/Essentials/CalendarMonth";
 import MonthNavigator from "@components/Essentials/MonthNavigator";
+import { Reminder } from "@prisma-client";
 import { CalendarIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getReminders } from "../dashboard/dashboard-action";
 
 export default function CalendarPage() {
+  const [reminders, setReminders] = useState<Reminder[]>([]);
+
+  useEffect(() => {
+    const getData = async () => {
+      const data = await getReminders();
+      setReminders(data?.data ?? []);
+    };
+    getData();
+  }, []);
+
   const [currentDate, setCurrentDate] = useState(new Date());
   const goToPreviousMonth = () => {
     setCurrentDate(
@@ -47,7 +59,7 @@ export default function CalendarPage() {
           goToToday={goToToday}
         />
       </div>
-      <CalendarMonth currentMonth={currentDate} reminders={[]} />
+      <CalendarMonth currentMonth={currentDate} reminders={reminders} />
     </div>
   );
 }
