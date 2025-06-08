@@ -56,7 +56,9 @@ export const createReminder = authActionClient
           questionData.difficulty.toUpperCase() as PROBLEM_DIFFICULTY,
       },
     });
-    return revalidatePath("/dashboard");
+    revalidatePath("/dashboard");
+    revalidatePath("/calendar");
+    return;
   });
 
 // Used for fetching reminders for the authenticated user.

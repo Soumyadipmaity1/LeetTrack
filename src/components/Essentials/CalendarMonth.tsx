@@ -55,23 +55,25 @@ export default function CalendarMonth({
           <button className="text-xs text-gray-400 hover:text-black">+</button>
         </div>
 
-        {dayReminders.map((reminder, idx) => (
-          <Link
-            href={`/problems/${reminder.problemSlug}`}
-            target="_blank"
-            key={idx}
-            className={`text-xs truncate cursor-pointer ${
-              reminder.reminderStatus === "PENDING"
-                ? "text-red-600"
-                : reminder.reminderStatus === "COMPLETED"
-                ? "text-green-600"
-                : "text-yellow-600"
-            }`}
-            prefetch
-          >
-            • {reminder.problemTitle}
-          </Link>
-        ))}
+        <div className="flex flex-col">
+          {dayReminders.map((reminder, idx) => (
+            <Link
+              href={`https://leetcode.com/problems/${reminder.problemSlug}`}
+              target="_blank"
+              key={idx}
+              className={`text-xs truncate cursor-pointer ${
+                reminder.reminderStatus === "PENDING"
+                  ? "text-red-600"
+                  : reminder.reminderStatus === "COMPLETED"
+                  ? "text-green-600"
+                  : "text-yellow-600"
+              }`}
+              prefetch
+            >
+              • {reminder.problemTitle}
+            </Link>
+          ))}
+        </div>
       </div>
     );
 
