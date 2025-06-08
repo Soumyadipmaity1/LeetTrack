@@ -26,3 +26,20 @@ export const updateEmailNotificationSettings = authActionClient
     });
     return revalidatePath("/settings");
   });
+
+const updateNotifSettingsSchema = z.object({
+  sendNotifReminder: z.boolean(),
+  sendUpcomingNotifReminder: z.boolean(),
+  sendAchievementAlert: z.boolean(),
+  sendStreakReminder: z.boolean(),
+});
+
+export const updateNotifSettings = authActionClient
+  .schema(updateNotifSettingsSchema)
+  .action(async ({ ctx, parsedInput }) => {
+    await ctx.db.user.update({
+      where: { externalUserId: ctx.user.externalUserId },
+      data: parsedInput,
+    });
+    return revalidatePath("/settings");
+  });

@@ -1,18 +1,18 @@
 "use client";
 
+import { updateNotifSettings } from "@/app/(main)/settings/settings-action";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { User } from "@prisma-client";
-import { Save, Smartphone } from "lucide-react";
-import { useState } from "react";
+import { Loader2, Save, Smartphone } from "lucide-react";
+import { useAction } from "next-safe-action/hooks";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export default function PushNotification({ userData }: { userData: User }) {
-  const [enabled, setEnabled] = useState(
-    userData.preferredNotificationMethod === "PUSH_NOTIFICATION" ||
-      userData.preferredNotificationMethod === "BOTH"
-  );
-  const [reminder, setReminder] = useState(userData.sendReminderNotif);
+  const [enabled, setEnabled] = useState(userData.sendNotifReminder);
+  const [reminder, setReminder] = useState(userData.sendUpcomingNotifReminder);
   const [streakReminders, setStreakReminders] = useState(
     userData.sendStreakReminder
   );
@@ -80,12 +80,63 @@ export default function PushNotification({ userData }: { userData: User }) {
           <Button variant="outline" className="mb-4">
             Send Test Push
           </Button>
-          <Button className="rounded">
-            <Save />
-            Save Notification Settings
-          </Button>
+          <SaveNotificationSettingsButton
+            enabled={enabled}
+            reminder={reminder}
+            streakReminders={streakReminders}
+            achievement={achievement}
+          />
         </div>
       </CardContent>
     </Card>
+  );
+}
+
+function SaveNotificationSettingsButton({
+  enabled,
+  reminder,
+  streakReminders,
+  achievement,
+}: {
+  enabled: boolean;
+  reminder: boolean;
+  streakReminders: boolean;
+  achievement: boolean;
+}) {
+  const { execute, hasErrored, hasSucceeded, isExecuting } =
+    useAction(updateNotifSettings);
+
+  useEffect(() => {
+    if (hasSucceeded) {
+      toast.success("Successfully updated notification settings");
+    }
+
+    if (hasErrored) {
+      toast.error("Error updating notification settings");
+    }
+  }, [hasSucceeded, hasErrored]);
+
+  return (
+    <Button
+      className="rounded"
+      disabled={isExecuting}
+      onClick={() =>
+        execute({
+          sendNotifReminder: enabled,
+          sendUpcomingNotifReminder: reminder,
+          sendAchievementAlert: achievement,
+          sendStreakReminder: streakReminders,
+        })
+      }
+    >
+      {!isExecuting ? (
+        <>
+          <Save />
+          Save Notification Settings
+        </>
+      ) : (
+        <Loader2 className="animate-spin" />
+      )}
+    </Button>
   );
 }

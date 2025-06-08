@@ -20,9 +20,10 @@ model User {
   sendWeeklyReport     Boolean @default(true)
 
   // Push Notifications
-  sendReminderNotif    Boolean @default(false)
-  sendAchievementAlert Boolean @default(false)
-  sendStreakReminder   Boolean @default(false)
+  sendNotifReminder         Boolean @default(false)
+  sendUpcomingNotifReminder Boolean @default(false)
+  sendAchievementAlert      Boolean @default(false)
+  sendStreakReminder        Boolean @default(false)
 
   // User can set multiple reminders
   reminder Reminder[]
