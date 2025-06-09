@@ -1,0 +1,18 @@
+name: Daily Digest
+
+on:
+  schedule:
+    - cron: "25 17 * * *" # Runs daily at 22:55 PM IST (UTC+5:30)
+  workflow_dispatch: # Allows manual runs for testing
+
+jobs:
+  deployment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Daily Digest
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: "vercel.url/api/webhook/github/daily-digest"
+          method: "POST"
+          customHeaders: '{"Content-Type": "application/json"}'
+          data: '{"auth": "${{ secrets.AUTH_SECRET_TOKEN }}"}'
