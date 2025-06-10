@@ -1,6 +1,10 @@
 import { db } from "@/lib/db";
 import { Resend } from "resend";
-import { dailyDigestTemplate, weeklyReportTemplate } from "./email-templates";
+import {
+  dailyDigestTemplate,
+  reminderEmailTemplate,
+  weeklyReportTemplate,
+} from "./email-templates";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
@@ -46,7 +50,20 @@ export async function sendReminderEmails() {
         },
       },
     });
-    const sentEmails = Promise.allSettled(users.map((user) => {}));
+    const sentEmails = Promise.allSettled(
+      users.map((user) => {
+        const template = reminderEmailTemplate({
+          userName: user.email.split("@")[0],
+          reminders: user.reminder,
+        });
+        return sendEmail({
+          to: user.email,
+          subject: template.subject,
+          html: template.html,
+          text: template.text,
+        });
+      }),
+    );
     sentEmails.catch((error) => {
       console.error("Error sending reminder email:", error);
       throw error;

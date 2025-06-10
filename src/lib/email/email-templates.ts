@@ -1,9 +1,8 @@
+import { Reminder } from "@prisma-client";
+
 interface ReminderEmailData {
   userName: string;
-  problemTitle: string;
-  problemSlug: string;
-  problemDifficulty: "EASY" | "MEDIUM" | "HARD";
-  scheduledDate: string;
+  reminders: Reminder[];
 }
 
 interface DailyDigestData {
