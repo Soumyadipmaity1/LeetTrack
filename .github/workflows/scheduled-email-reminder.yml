@@ -2,7 +2,7 @@ name: Scheduled Email Reminder
 
 on:
   schedule:
-    - cron: "25 14 * * *" # Runs daily at 19:55 PM IST (UTC+5:30)
+    - cron: "30 13 * * *" # Runs daily at 7:00 PM IST (UTC+5:30)
   workflow_dispatch: # Allows manual runs for testing
 
 jobs:
@@ -12,7 +12,6 @@ jobs:
       - name: Send Scheduled Email Reminder
         uses: fjogeleit/http-request-action@v1
         with:
-          url: "vercel.url/api/webhook/github/scheduled"
+          url: "${{ secrets.VERCEL_URL }}/api/webhook/github/scheduled"
           method: "POST"
-          customHeaders: '{"Content-Type": "application/json"}'
-          data: '{"auth": "${{ secrets.AUTH_SECRET_TOKEN }}"}'
+          customHeaders: '{"Content-Type": "application/json", "Authorization": "Bearer ${{ secrets.GITHUB_WEBHOOK_SECRET }}"}'
