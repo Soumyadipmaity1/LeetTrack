@@ -104,6 +104,14 @@ export async function sendDailyDigestEmail() {
 
 // Send weekly report email
 export async function sendWeeklyReportEmail() {
+  // Calculate week start and end dates
+  const now = new Date();
+  const weekStart = new Date(now.setDate(now.getDate() - now.getDay()));
+  weekStart.setHours(0, 0, 0, 0);
+  const weekEnd = new Date(weekStart);
+  weekEnd.setDate(weekStart.getDate() + 6);
+  weekEnd.setHours(23, 59, 59, 999);
+
   try {
     const users = await db.user.findMany({
       where: { sendWeeklyReport: true },
@@ -111,6 +119,11 @@ export async function sendWeeklyReportEmail() {
         reminder: {
           where: {
             reminderStatus: "COMPLETED",
+            scheduledDate: {
+              // get all completed reminders for the week
+              gte: weekStart,
+              lte: weekEnd,
+            },
           },
         },
       },
@@ -120,23 +133,10 @@ export async function sendWeeklyReportEmail() {
       throw new Error("User not found");
     }
 
-    // Calculate week start and end dates
-    const now = new Date();
-    const weekStart = new Date(now.setDate(now.getDate() - now.getDay()));
-    weekStart.setHours(0, 0, 0, 0);
-    const weekEnd = new Date(weekStart);
-    weekEnd.setDate(weekStart.getDate() + 6);
-    weekEnd.setHours(23, 59, 59, 999);
-
     const sentEmails = Promise.allSettled(
       users.map(async (user) => {
         // Get completed reminders for this week
-        const completedReminders = user.reminder.filter(
-          (r) =>
-            r.updatedAt >= weekStart &&
-            r.updatedAt <= weekEnd &&
-            r.reminderStatus === "COMPLETED",
-        );
+        const { reminder: completedReminders } = user;
         var [easyCompleted, mediumCompleted, hardCompleted] = [0, 0, 0];
         completedReminders.forEach((r) => {
           if (r.problemDifficulty === "EASY") {
