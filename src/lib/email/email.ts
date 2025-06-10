@@ -1,10 +1,6 @@
 import { db } from "@/lib/db";
 import { Resend } from "resend";
-import {
-  dailyDigestTemplate,
-  emailTemplateGenerator,
-  weeklyReportTemplate,
-} from "./email-templates";
+import { dailyDigestTemplate, weeklyReportTemplate } from "./email-templates";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
@@ -83,7 +79,30 @@ export async function sendDailyDigestEmail() {
     });
     const sentEmails = Promise.allSettled(
       users.map((user) => {
-        const template = dailyDigestTemplate(emailTemplateGenerator(user));
+        const emailData = {
+          userName: user.email.split("@")[0],
+          todayReminders: user.reminder.map((r) => ({
+            problemTitle: r.problemTitle,
+            problemSlug: r.problemSlug,
+            problemDifficulty: r.problemDifficulty as
+              | "EASY"
+              | "MEDIUM"
+              | "HARD",
+          })),
+          upcomingReminders: user.reminder
+            .filter((r) => r.reminderStatus === "UPCOMING")
+            .map((r) => ({
+              problemTitle: r.problemTitle,
+              problemSlug: r.problemSlug,
+              problemDifficulty: r.problemDifficulty,
+              scheduledDate: r.scheduledDate.toLocaleDateString("en-US", {
+                weekday: "short",
+                month: "short",
+                day: "numeric",
+              }),
+            })),
+        };
+        const template = dailyDigestTemplate(emailData);
         return sendEmail({
           to: user.email,
           subject: template.subject,

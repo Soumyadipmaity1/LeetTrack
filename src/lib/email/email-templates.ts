@@ -1,5 +1,3 @@
-import { Reminder, User } from "@prisma-client";
-
 interface ReminderEmailData {
   userName: string;
   problemTitle: string;
@@ -62,29 +60,6 @@ const getDifficultyBadge = (difficulty: string) => {
       ${difficulty}
     </span>
   `;
-};
-
-export const emailTemplateGenerator = (
-  user: User & { reminder: Reminder[] },
-) => {
-  return {
-    userName: user.email.split("@")[0],
-    todayReminders: user.reminder.map((r) => ({
-      problemTitle: r.problemTitle,
-      problemSlug: r.problemSlug,
-      problemDifficulty: r.problemDifficulty,
-    })),
-    upcomingReminders: user.reminder.map((r) => ({
-      problemTitle: r.problemTitle,
-      problemSlug: r.problemSlug,
-      problemDifficulty: r.problemDifficulty,
-      scheduledDate: r.scheduledDate.toLocaleDateString("en-US", {
-        weekday: "short",
-        month: "short",
-        day: "numeric",
-      }),
-    })),
-  };
 };
 
 export const reminderEmailTemplate = (data: ReminderEmailData) => {
