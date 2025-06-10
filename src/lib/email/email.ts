@@ -18,7 +18,7 @@ interface SendEmailOptions {
 export async function sendEmail({ to, subject, html, text }: SendEmailOptions) {
   try {
     const msg = await resend.emails.send({
-      from: process.env.FROM_EMAIL!,
+      from: process.env.FROM_EMAIL as string,
       to,
       subject,
       html,
@@ -93,74 +93,57 @@ export async function sendReminderEmail(reminderId: string) {
 }
 
 // Send daily digest email
-export async function sendDailyDigestEmail(userId: string) {
+export async function sendDailyDigestEmail() {
   try {
-    const user = await db.user.findUnique({
-      where: { externalUserId: userId },
+    const users = await db.user.findMany({
+      where: {
+        sendDailyDigest: true,
+      },
       include: {
         reminder: {
           where: {
+            // Get upcoming reminders for the next 7 days
             scheduledDate: {
-              gte: new Date(new Date().setHours(0, 0, 0, 0)),
-              lt: new Date(new Date().setHours(23, 59, 59, 999)),
+              gt: new Date(),
+              lte: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
             },
+            reminderStatus: "UPCOMING",
           },
         },
       },
     });
-
-    if (!user) {
-      throw new Error("User not found");
-    }
-
-    // Check if user wants daily digest
-    if (!user.sendDailyDigest) {
-      console.log(`User ${user.email} has disabled daily digest`);
-      return null;
-    }
-
-    // Get upcoming reminders for the next 7 days
-    const upcomingReminders = await db.reminder.findMany({
-      where: {
-        userId: user.externalUserId,
-        scheduledDate: {
-          gt: new Date(),
-          lte: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-        },
-      },
-      orderBy: { scheduledDate: "asc" },
+    const sentEmails = Promise.allSettled(
+      users.map((user) => {
+        const emailData = {
+          userName: user.email.split("@")[0],
+          todayReminders: user.reminder.map((r) => ({
+            problemTitle: r.problemTitle,
+            problemSlug: r.problemSlug,
+            problemDifficulty: r.problemDifficulty,
+          })),
+          upcomingReminders: user.reminder.map((r) => ({
+            problemTitle: r.problemTitle,
+            problemSlug: r.problemSlug,
+            problemDifficulty: r.problemDifficulty,
+            scheduledDate: r.scheduledDate.toLocaleDateString("en-US", {
+              weekday: "short",
+              month: "short",
+              day: "numeric",
+            }),
+          })),
+        };
+        const template = dailyDigestTemplate(emailData);
+        return sendEmail({
+          to: user.email,
+          subject: template.subject,
+          html: template.html,
+          text: template.text,
+        });
+      }),
+    );
+    sentEmails.catch((error) => {
+      console.error("Error sending daily digest:", error);
     });
-
-    const emailData = {
-      userName: user.email.split("@")[0],
-      todayReminders: user.reminder.map((r) => ({
-        problemTitle: r.problemTitle,
-        problemSlug: r.problemSlug,
-        problemDifficulty: r.problemDifficulty as "EASY" | "MEDIUM" | "HARD",
-      })),
-      upcomingReminders: upcomingReminders.map((r) => ({
-        problemTitle: r.problemTitle,
-        problemSlug: r.problemSlug,
-        problemDifficulty: r.problemDifficulty as "EASY" | "MEDIUM" | "HARD",
-        scheduledDate: r.scheduledDate.toLocaleDateString("en-US", {
-          weekday: "short",
-          month: "short",
-          day: "numeric",
-        }),
-      })),
-    };
-
-    const template = dailyDigestTemplate(emailData);
-
-    const result = await sendEmail({
-      to: user.email,
-      subject: template.subject,
-      html: template.html,
-      text: template.text,
-    });
-
-    console.log(`Daily digest sent to ${user.email}`);
-    return result;
   } catch (error) {
     console.error("Error sending daily digest:", error);
     throw error;
