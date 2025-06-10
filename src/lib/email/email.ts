@@ -1,10 +1,10 @@
 import { db } from "@/lib/db";
+import { Resend } from "resend";
 import {
   dailyDigestTemplate,
   reminderEmailTemplate,
-  weeklyReportTemplate
-} from "@/lib/email-templates";
-import { Resend } from "resend";
+  weeklyReportTemplate,
+} from "./email-templates";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
@@ -24,7 +24,6 @@ export async function sendEmail({ to, subject, html, text }: SendEmailOptions) {
       html,
       text,
     });
-    console.log("Resend response:", msg);
     return msg;
   } catch (err) {
     console.error("Resend sendEmail error:", err);
@@ -37,7 +36,7 @@ export async function sendReminderEmail(reminderId: string) {
   try {
     const reminder = await db.reminder.findUnique({
       where: { id: reminderId },
-      include: { user: true }
+      include: { user: true },
     });
 
     if (!reminder) {
@@ -51,18 +50,21 @@ export async function sendReminderEmail(reminderId: string) {
     }
 
     const emailData = {
-      userName: reminder.user.email.split('@')[0], // Use email prefix as name for now
+      userName: reminder.user.email.split("@")[0], // Use email prefix as name for now
       problemTitle: reminder.problemTitle,
       problemSlug: reminder.problemSlug,
-      problemDifficulty: reminder.problemDifficulty as 'EASY' | 'MEDIUM' | 'HARD',
-      scheduledDate: reminder.scheduledDate.toLocaleDateString('en-US', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      })
+      problemDifficulty: reminder.problemDifficulty as
+        | "EASY"
+        | "MEDIUM"
+        | "HARD",
+      scheduledDate: reminder.scheduledDate.toLocaleDateString("en-US", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
     };
 
     const template = reminderEmailTemplate(emailData);
@@ -71,16 +73,18 @@ export async function sendReminderEmail(reminderId: string) {
       to: reminder.user.email,
       subject: template.subject,
       html: template.html,
-      text: template.text
+      text: template.text,
     });
 
     // Update reminder status to PENDING
     await db.reminder.update({
       where: { id: reminderId },
-      data: { reminderStatus: 'PENDING' }
+      data: { reminderStatus: "PENDING" },
     });
 
-    console.log(`Reminder email sent to ${reminder.user.email} for problem: ${reminder.problemTitle}`);
+    console.log(
+      `Reminder email sent to ${reminder.user.email} for problem: ${reminder.problemTitle}`,
+    );
     return result;
   } catch (error) {
     console.error("Error sending reminder email:", error);
@@ -98,11 +102,11 @@ export async function sendDailyDigestEmail(userId: string) {
           where: {
             scheduledDate: {
               gte: new Date(new Date().setHours(0, 0, 0, 0)),
-              lt: new Date(new Date().setHours(23, 59, 59, 999))
-            }
-          }
-        }
-      }
+              lt: new Date(new Date().setHours(23, 59, 59, 999)),
+            },
+          },
+        },
+      },
     });
 
     if (!user) {
@@ -121,29 +125,29 @@ export async function sendDailyDigestEmail(userId: string) {
         userId: user.externalUserId,
         scheduledDate: {
           gt: new Date(),
-          lte: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-        }
+          lte: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        },
       },
-      orderBy: { scheduledDate: 'asc' }
+      orderBy: { scheduledDate: "asc" },
     });
 
     const emailData = {
-      userName: user.email.split('@')[0],
-      todayReminders: user.reminder.map(r => ({
+      userName: user.email.split("@")[0],
+      todayReminders: user.reminder.map((r) => ({
         problemTitle: r.problemTitle,
         problemSlug: r.problemSlug,
-        problemDifficulty: r.problemDifficulty as 'EASY' | 'MEDIUM' | 'HARD'
+        problemDifficulty: r.problemDifficulty as "EASY" | "MEDIUM" | "HARD",
       })),
-      upcomingReminders: upcomingReminders.map(r => ({
+      upcomingReminders: upcomingReminders.map((r) => ({
         problemTitle: r.problemTitle,
         problemSlug: r.problemSlug,
-        problemDifficulty: r.problemDifficulty as 'EASY' | 'MEDIUM' | 'HARD',
-        scheduledDate: r.scheduledDate.toLocaleDateString('en-US', {
-          weekday: 'short',
-          month: 'short',
-          day: 'numeric'
-        })
-      }))
+        problemDifficulty: r.problemDifficulty as "EASY" | "MEDIUM" | "HARD",
+        scheduledDate: r.scheduledDate.toLocaleDateString("en-US", {
+          weekday: "short",
+          month: "short",
+          day: "numeric",
+        }),
+      })),
     };
 
     const template = dailyDigestTemplate(emailData);
@@ -152,7 +156,7 @@ export async function sendDailyDigestEmail(userId: string) {
       to: user.email,
       subject: template.subject,
       html: template.html,
-      text: template.text
+      text: template.text,
     });
 
     console.log(`Daily digest sent to ${user.email}`);
@@ -167,7 +171,7 @@ export async function sendDailyDigestEmail(userId: string) {
 export async function sendWeeklyReportEmail(userId: string) {
   try {
     const user = await db.user.findUnique({
-      where: { externalUserId: userId }
+      where: { externalUserId: userId },
     });
 
     if (!user) {
@@ -192,12 +196,12 @@ export async function sendWeeklyReportEmail(userId: string) {
     const completedReminders = await db.reminder.findMany({
       where: {
         userId: user.externalUserId,
-        reminderStatus: 'COMPLETED',
+        reminderStatus: "COMPLETED",
         updatedAt: {
           gte: weekStart,
-          lte: weekEnd
-        }
-      }
+          lte: weekEnd,
+        },
+      },
     });
 
     // Get total reminders for this week
@@ -206,31 +210,37 @@ export async function sendWeeklyReportEmail(userId: string) {
         userId: user.externalUserId,
         scheduledDate: {
           gte: weekStart,
-          lte: weekEnd
-        }
-      }
+          lte: weekEnd,
+        },
+      },
     });
 
     // Count by difficulty
-    const easyCompleted = completedReminders.filter(r => r.problemDifficulty === 'EASY').length;
-    const mediumCompleted = completedReminders.filter(r => r.problemDifficulty === 'MEDIUM').length;
-    const hardCompleted = completedReminders.filter(r => r.problemDifficulty === 'HARD').length;
+    const easyCompleted = completedReminders.filter(
+      (r) => r.problemDifficulty === "EASY",
+    ).length;
+    const mediumCompleted = completedReminders.filter(
+      (r) => r.problemDifficulty === "MEDIUM",
+    ).length;
+    const hardCompleted = completedReminders.filter(
+      (r) => r.problemDifficulty === "HARD",
+    ).length;
 
     const emailData = {
-      userName: user.email.split('@')[0],
+      userName: user.email.split("@")[0],
       completedProblems: completedReminders.length,
       totalReminders,
       easyCompleted,
       mediumCompleted,
       hardCompleted,
-      weekStartDate: weekStart.toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric'
+      weekStartDate: weekStart.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
       }),
-      weekEndDate: weekEnd.toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric'
-      })
+      weekEndDate: weekEnd.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      }),
     };
 
     const template = weeklyReportTemplate(emailData);
@@ -239,7 +249,7 @@ export async function sendWeeklyReportEmail(userId: string) {
       to: user.email,
       subject: template.subject,
       html: template.html,
-      text: template.text
+      text: template.text,
     });
 
     console.log(`Weekly report sent to ${user.email}`);
@@ -254,7 +264,7 @@ export async function sendWeeklyReportEmail(userId: string) {
 export async function sendUpcomingReminderEmail(userId: string) {
   try {
     const user = await db.user.findUnique({
-      where: { externalUserId: userId }
+      where: { externalUserId: userId },
     });
 
     if (!user || !user.sendUpcomingReminder) {
@@ -265,13 +275,13 @@ export async function sendUpcomingReminderEmail(userId: string) {
     const upcomingReminders = await db.reminder.findMany({
       where: {
         userId: user.externalUserId,
-        reminderStatus: 'UPCOMING',
+        reminderStatus: "UPCOMING",
         scheduledDate: {
           gte: new Date(),
-          lte: new Date(Date.now() + 24 * 60 * 60 * 1000)
-        }
+          lte: new Date(Date.now() + 24 * 60 * 60 * 1000),
+        },
       },
-      orderBy: { scheduledDate: 'asc' }
+      orderBy: { scheduledDate: "asc" },
     });
 
     if (upcomingReminders.length === 0) {
@@ -279,29 +289,29 @@ export async function sendUpcomingReminderEmail(userId: string) {
     }
 
     const emailData = {
-      userName: user.email.split('@')[0],
+      userName: user.email.split("@")[0],
       todayReminders: [],
-      upcomingReminders: upcomingReminders.map(r => ({
+      upcomingReminders: upcomingReminders.map((r) => ({
         problemTitle: r.problemTitle,
         problemSlug: r.problemSlug,
-        problemDifficulty: r.problemDifficulty as 'EASY' | 'MEDIUM' | 'HARD',
-        scheduledDate: r.scheduledDate.toLocaleDateString('en-US', {
-          weekday: 'short',
-          month: 'short',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit'
-        })
-      }))
+        problemDifficulty: r.problemDifficulty as "EASY" | "MEDIUM" | "HARD",
+        scheduledDate: r.scheduledDate.toLocaleDateString("en-US", {
+          weekday: "short",
+          month: "short",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+      })),
     };
 
     const template = dailyDigestTemplate(emailData);
 
     const result = await sendEmail({
       to: user.email,
-      subject: `🔔 ${upcomingReminders.length} reminder${upcomingReminders.length > 1 ? 's' : ''} coming up!`,
+      subject: `🔔 ${upcomingReminders.length} reminder${upcomingReminders.length > 1 ? "s" : ""} coming up!`,
       html: template.html,
-      text: template.text
+      text: template.text,
     });
 
     console.log(`Upcoming reminder notification sent to ${user.email}`);

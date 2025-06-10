@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { sendWeeklyReportEmail } from "@/lib/email";
+import { sendWeeklyReportEmail } from "@lib/email/email";
 
 async function getAllUsersWithWeeklyReportEnabled() {
   return await db.user.findMany({
@@ -16,7 +16,7 @@ async function getAllUsersWithWeeklyReportEnabled() {
 export async function POST(req: Request) {
   try {
     // Verify the request is from GitHub Actions (optional security measure)
-    const authHeader = req.headers.get('authorization');
+    const authHeader = req.headers.get("authorization");
     if (authHeader !== `Bearer ${process.env.GITHUB_WEBHOOK_SECRET}`) {
       return new Response("Unauthorized", { status: 401 });
     }
@@ -24,7 +24,9 @@ export async function POST(req: Request) {
     const users = await getAllUsersWithWeeklyReportEnabled();
 
     if (users.length === 0) {
-      return new Response("No users with weekly report enabled", { status: 200 });
+      return new Response("No users with weekly report enabled", {
+        status: 200,
+      });
     }
 
     let sentCount = 0;

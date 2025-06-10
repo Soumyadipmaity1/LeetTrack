@@ -1,6 +1,5 @@
-
 import { db } from "@/lib/db";
-import { sendReminderEmail } from "@/lib/email";
+import { sendReminderEmail } from "@lib/email/email";
 
 async function getUpcomingReminders() {
   // Fetch reminders that are due now (within the current hour)
@@ -29,7 +28,7 @@ async function getUpcomingReminders() {
 export async function POST(req: Request) {
   try {
     // Verify the request is from GitHub Actions (optional security measure)
-    const authHeader = req.headers.get('authorization');
+    const authHeader = req.headers.get("authorization");
     if (authHeader !== `Bearer ${process.env.GITHUB_WEBHOOK_SECRET}`) {
       return new Response("Unauthorized", { status: 401 });
     }
@@ -63,4 +62,3 @@ export async function POST(req: Request) {
     return new Response("Error processing reminders", { status: 500 });
   }
 }
-
