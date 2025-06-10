@@ -67,3 +67,4 @@ model Reminder {
 
   @@index([userId, problemSlug])
 }
+
