@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 import { Resend } from "resend";
 import {
   dailyDigestTemplate,
-  reminderEmailTemplate,
+  emailTemplateGenerator,
   weeklyReportTemplate,
 } from "./email-templates";
 
@@ -12,7 +12,7 @@ interface SendEmailOptions {
   to: string;
   subject: string;
   html: string;
-  text?: string;
+  text: string;
 }
 
 export async function sendEmail({ to, subject, html, text }: SendEmailOptions) {
@@ -32,60 +32,25 @@ export async function sendEmail({ to, subject, html, text }: SendEmailOptions) {
 }
 
 // Send individual reminder email
-export async function sendReminderEmail(reminderId: string) {
+export async function sendReminderEmails() {
   try {
-    const reminder = await db.reminder.findUnique({
-      where: { id: reminderId },
-      include: { user: true },
+    const users = await db.user.findMany({
+      where: {
+        sendEmailReminder: true,
+      },
+      include: {
+        reminder: {
+          where: {
+            reminderStatus: "UPCOMING",
+            scheduledDate: {
+              // Get Reminders Due Today
+              equals: new Date(),
+            },
+          },
+        },
+      },
     });
-
-    if (!reminder) {
-      throw new Error("Reminder not found");
-    }
-
-    // Check if user wants email reminders
-    if (!reminder.user.sendEmailReminder) {
-      console.log(`User ${reminder.user.email} has disabled email reminders`);
-      return null;
-    }
-
-    const emailData = {
-      userName: reminder.user.email.split("@")[0], // Use email prefix as name for now
-      problemTitle: reminder.problemTitle,
-      problemSlug: reminder.problemSlug,
-      problemDifficulty: reminder.problemDifficulty as
-        | "EASY"
-        | "MEDIUM"
-        | "HARD",
-      scheduledDate: reminder.scheduledDate.toLocaleDateString("en-US", {
-        weekday: "long",
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-    };
-
-    const template = reminderEmailTemplate(emailData);
-
-    const result = await sendEmail({
-      to: reminder.user.email,
-      subject: template.subject,
-      html: template.html,
-      text: template.text,
-    });
-
-    // Update reminder status to PENDING
-    await db.reminder.update({
-      where: { id: reminderId },
-      data: { reminderStatus: "PENDING" },
-    });
-
-    console.log(
-      `Reminder email sent to ${reminder.user.email} for problem: ${reminder.problemTitle}`,
-    );
-    return result;
+    const sentEmails = Promise.allSettled(users.map((user) => {}));
   } catch (error) {
     console.error("Error sending reminder email:", error);
     throw error;
@@ -114,25 +79,7 @@ export async function sendDailyDigestEmail() {
     });
     const sentEmails = Promise.allSettled(
       users.map((user) => {
-        const emailData = {
-          userName: user.email.split("@")[0],
-          todayReminders: user.reminder.map((r) => ({
-            problemTitle: r.problemTitle,
-            problemSlug: r.problemSlug,
-            problemDifficulty: r.problemDifficulty,
-          })),
-          upcomingReminders: user.reminder.map((r) => ({
-            problemTitle: r.problemTitle,
-            problemSlug: r.problemSlug,
-            problemDifficulty: r.problemDifficulty,
-            scheduledDate: r.scheduledDate.toLocaleDateString("en-US", {
-              weekday: "short",
-              month: "short",
-              day: "numeric",
-            }),
-          })),
-        };
-        const template = dailyDigestTemplate(emailData);
+        const template = dailyDigestTemplate(emailTemplateGenerator(user));
         return sendEmail({
           to: user.email,
           subject: template.subject,

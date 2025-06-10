@@ -1,8 +1,10 @@
+import { Reminder, User } from "@prisma-client";
+
 interface ReminderEmailData {
   userName: string;
   problemTitle: string;
   problemSlug: string;
-  problemDifficulty: 'EASY' | 'MEDIUM' | 'HARD';
+  problemDifficulty: "EASY" | "MEDIUM" | "HARD";
   scheduledDate: string;
 }
 
@@ -11,12 +13,12 @@ interface DailyDigestData {
   todayReminders: Array<{
     problemTitle: string;
     problemSlug: string;
-    problemDifficulty: 'EASY' | 'MEDIUM' | 'HARD';
+    problemDifficulty: "EASY" | "MEDIUM" | "HARD";
   }>;
   upcomingReminders: Array<{
     problemTitle: string;
     problemSlug: string;
-    problemDifficulty: 'EASY' | 'MEDIUM' | 'HARD';
+    problemDifficulty: "EASY" | "MEDIUM" | "HARD";
     scheduledDate: string;
   }>;
 }
@@ -34,10 +36,14 @@ interface WeeklyReportData {
 
 const getDifficultyColor = (difficulty: string) => {
   switch (difficulty) {
-    case 'EASY': return '#00b8a3';
-    case 'MEDIUM': return '#ffc01e';
-    case 'HARD': return '#ff375f';
-    default: return '#6b7280';
+    case "EASY":
+      return "#00b8a3";
+    case "MEDIUM":
+      return "#ffc01e";
+    case "HARD":
+      return "#ff375f";
+    default:
+      return "#6b7280";
   }
 };
 
@@ -56,6 +62,29 @@ const getDifficultyBadge = (difficulty: string) => {
       ${difficulty}
     </span>
   `;
+};
+
+export const emailTemplateGenerator = (
+  user: User & { reminder: Reminder[] },
+) => {
+  return {
+    userName: user.email.split("@")[0],
+    todayReminders: user.reminder.map((r) => ({
+      problemTitle: r.problemTitle,
+      problemSlug: r.problemSlug,
+      problemDifficulty: r.problemDifficulty,
+    })),
+    upcomingReminders: user.reminder.map((r) => ({
+      problemTitle: r.problemTitle,
+      problemSlug: r.problemSlug,
+      problemDifficulty: r.problemDifficulty,
+      scheduledDate: r.scheduledDate.toLocaleDateString("en-US", {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+      }),
+    })),
+  };
 };
 
 export const reminderEmailTemplate = (data: ReminderEmailData) => {
@@ -134,7 +163,7 @@ export const reminderEmailTemplate = (data: ReminderEmailData) => {
 
       Happy coding!
       LeetTrack Team
-    `
+    `,
   };
 };
 
@@ -158,9 +187,13 @@ export const dailyDigestTemplate = (data: DailyDigestData) => {
           <div style="background: #f8f9fa; padding: 25px; border-radius: 8px; margin-bottom: 25px;">
             <h2 style="color: #2d3748; margin-top: 0;">Good morning, ${data.userName}! ☀️</h2>
 
-            ${data.todayReminders.length > 0 ? `
+            ${
+              data.todayReminders.length > 0
+                ? `
               <h3 style="color: #2d3748; border-bottom: 2px solid #4facfe; padding-bottom: 10px;">🎯 Today's Problems (${data.todayReminders.length})</h3>
-              ${data.todayReminders.map(problem => `
+              ${data.todayReminders
+                .map(
+                  (problem) => `
                 <div style="background: white; padding: 15px; border-radius: 8px; margin: 10px 0; border-left: 4px solid ${getDifficultyColor(problem.problemDifficulty)};">
                   <h4 style="margin: 0 0 5px 0; color: #2d3748;">${problem.problemTitle}</h4>
                   <p style="margin: 5px 0;">
@@ -171,24 +204,37 @@ export const dailyDigestTemplate = (data: DailyDigestData) => {
                     View Problem →
                   </a>
                 </div>
-              `).join('')}
-            ` : `
+              `,
+                )
+                .join("")}
+            `
+                : `
               <div style="background: white; padding: 20px; border-radius: 8px; text-align: center; color: #666;">
                 <p>🎉 No problems scheduled for today! Take a well-deserved break or explore new challenges.</p>
               </div>
-            `}
+            `
+            }
 
-            ${data.upcomingReminders.length > 0 ? `
+            ${
+              data.upcomingReminders.length > 0
+                ? `
               <h3 style="color: #2d3748; border-bottom: 2px solid #00f2fe; padding-bottom: 10px; margin-top: 30px;">📅 Upcoming This Week</h3>
-              ${data.upcomingReminders.slice(0, 3).map(problem => `
+              ${data.upcomingReminders
+                .slice(0, 3)
+                .map(
+                  (problem) => `
                 <div style="background: white; padding: 15px; border-radius: 8px; margin: 10px 0; border-left: 4px solid #e2e8f0;">
                   <h4 style="margin: 0 0 5px 0; color: #2d3748;">${problem.problemTitle}</h4>
                   <p style="margin: 5px 0; font-size: 14px; color: #666;">
                     ${getDifficultyBadge(problem.problemDifficulty)} • ${problem.scheduledDate}
                   </p>
                 </div>
-              `).join('')}
-            ` : ''}
+              `,
+                )
+                .join("")}
+            `
+                : ""
+            }
           </div>
 
           <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #e2e8f0; color: #666; font-size: 14px;">
@@ -205,21 +251,34 @@ export const dailyDigestTemplate = (data: DailyDigestData) => {
       Good morning, ${data.userName}!
 
       Today's Problems (${data.todayReminders.length}):
-      ${data.todayReminders.map(p => `- ${p.problemTitle} (${p.problemDifficulty})`).join('\n')}
+      ${data.todayReminders.map((p) => `- ${p.problemTitle} (${p.problemDifficulty})`).join("\n")}
 
-      ${data.upcomingReminders.length > 0 ? `
+      ${
+        data.upcomingReminders.length > 0
+          ? `
       Upcoming This Week:
-      ${data.upcomingReminders.slice(0, 3).map(p => `- ${p.problemTitle} (${p.problemDifficulty}) - ${p.scheduledDate}`).join('\n')}
-      ` : ''}
+      ${data.upcomingReminders
+        .slice(0, 3)
+        .map(
+          (p) =>
+            `- ${p.problemTitle} (${p.problemDifficulty}) - ${p.scheduledDate}`,
+        )
+        .join("\n")}
+      `
+          : ""
+      }
 
       Keep coding!
       LeetTrack Team
-    `
+    `,
   };
 };
 
 export const weeklyReportTemplate = (data: WeeklyReportData) => {
-  const completionRate = data.totalReminders > 0 ? Math.round((data.completedProblems / data.totalReminders) * 100) : 0;
+  const completionRate =
+    data.totalReminders > 0
+      ? Math.round((data.completedProblems / data.totalReminders) * 100)
+      : 0;
 
   return {
     subject: `📈 Your Weekly Coding Report - ${data.completedProblems} problems solved!`,
@@ -271,11 +330,12 @@ export const weeklyReportTemplate = (data: WeeklyReportData) => {
           <div style="background: #e6fffa; padding: 20px; border-radius: 8px; border-left: 4px solid #38b2ac;">
             <h4 style="margin-top: 0; color: #2d3748;">🎯 Keep the momentum going!</h4>
             <p style="color: #4a5568; margin-bottom: 0;">
-              ${completionRate >= 80 ?
-                "Outstanding performance! You're crushing your coding goals. 🚀" :
-                completionRate >= 60 ?
-                "Great progress! You're building a solid coding habit. 💪" :
-                "Every problem solved is progress. Keep pushing forward! 🌟"
+              ${
+                completionRate >= 80
+                  ? "Outstanding performance! You're crushing your coding goals. 🚀"
+                  : completionRate >= 60
+                    ? "Great progress! You're building a solid coding habit. 💪"
+                    : "Every problem solved is progress. Keep pushing forward! 🌟"
               }
             </p>
           </div>
@@ -303,15 +363,16 @@ export const weeklyReportTemplate = (data: WeeklyReportData) => {
       - Medium: ${data.mediumCompleted}
       - Hard: ${data.hardCompleted}
 
-      ${completionRate >= 80 ?
-        "Outstanding performance! You're crushing your coding goals." :
-        completionRate >= 60 ?
-        "Great progress! You're building a solid coding habit." :
-        "Every problem solved is progress. Keep pushing forward!"
+      ${
+        completionRate >= 80
+          ? "Outstanding performance! You're crushing your coding goals."
+          : completionRate >= 60
+            ? "Great progress! You're building a solid coding habit."
+            : "Every problem solved is progress. Keep pushing forward!"
       }
 
       Keep coding!
       LeetTrack Team
-    `
+    `,
   };
 };
