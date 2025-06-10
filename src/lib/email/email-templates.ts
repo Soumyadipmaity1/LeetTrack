@@ -62,10 +62,8 @@ const getDifficultyBadge = (difficulty: string) => {
 };
 
 export const reminderEmailTemplate = (data: ReminderEmailData) => {
-  const leetcodeUrl = `https://leetcode.com/problems/${data.problemSlug}`;
-
   return {
-    subject: `🎯 Time to solve: ${data.problemTitle}`,
+    subject: `🎯 Time to solve coding problems`,
     html: `
       <!DOCTYPE html>
       <html>
@@ -85,23 +83,20 @@ export const reminderEmailTemplate = (data: ReminderEmailData) => {
             <p style="font-size: 16px; margin-bottom: 20px;">
               It's time to tackle your scheduled problem:
             </p>
-
-            <div style="background: white; padding: 20px; border-radius: 8px; border-left: 4px solid ${getDifficultyColor(data.problemDifficulty)};">
-              <h3 style="margin-top: 0; color: #2d3748; font-size: 20px;">${data.problemTitle}</h3>
+            ${data.reminders.map(
+              (reminder) => `
+              <div style="margin-bottom: 1rem; background: white; padding: 20px; border-radius: 8px; border-left: 4px solid ${getDifficultyColor(reminder.problemDifficulty)};cursor: pointer;"
+              onclick="window.open('https://leetcode.com/problems/${reminder.problemSlug}', '_blank')"
+              >
+              <h3 style="margin-top: 0; color: #2d3748; font-size: 20px;">${reminder.problemTitle}</h3>
               <p style="margin: 10px 0;">
-                Difficulty: ${getDifficultyBadge(data.problemDifficulty)}
+                Difficulty: ${getDifficultyBadge(reminder.problemDifficulty)}
               </p>
               <p style="color: #666; font-size: 14px; margin: 10px 0;">
-                Scheduled for: ${data.scheduledDate}
+                Scheduled for: ${reminder.scheduledDate}
               </p>
-            </div>
-          </div>
-
-          <div style="text-align: center; margin: 30px 0;">
-            <a href="${leetcodeUrl}"
-               style="background: #ffa116; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; display: inline-block; transition: background-color 0.3s;">
-              🚀 Solve Problem on LeetCode
-            </a>
+            </div>`,
+            )}
           </div>
 
           <div style="background: #e2e8f0; padding: 20px; border-radius: 8px; margin-top: 30px;">
@@ -127,13 +122,16 @@ export const reminderEmailTemplate = (data: ReminderEmailData) => {
     text: `
       Hi ${data.userName}!
 
-      It's time to tackle your scheduled LeetCode problem:
+      It's time to tackle your scheduled LeetCode problems!
 
-      Problem: ${data.problemTitle}
-      Difficulty: ${data.problemDifficulty}
-      Scheduled for: ${data.scheduledDate}
-
-      Solve it here: ${leetcodeUrl}
+      ${data.reminders.map(
+        (reminder) => `
+        Problem: ${reminder.problemTitle}
+        Difficulty: ${reminder.problemDifficulty}
+        Scheduled for: ${reminder.scheduledDate}
+        Solve it here: https://leetcode.com/problems/${reminder.problemSlug}
+        `,
+      )}
 
       Happy coding!
       LeetTrack Team
