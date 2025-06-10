@@ -51,6 +51,10 @@ export async function sendReminderEmails() {
       },
     });
     const sentEmails = Promise.allSettled(users.map((user) => {}));
+    sentEmails.catch((error) => {
+      console.error("Error sending reminder email:", error);
+      throw error;
+    });
   } catch (error) {
     console.error("Error sending reminder email:", error);
     throw error;
@@ -90,6 +94,7 @@ export async function sendDailyDigestEmail() {
     );
     sentEmails.catch((error) => {
       console.error("Error sending daily digest:", error);
+      throw error;
     });
   } catch (error) {
     console.error("Error sending daily digest:", error);
@@ -98,20 +103,21 @@ export async function sendDailyDigestEmail() {
 }
 
 // Send weekly report email
-export async function sendWeeklyReportEmail(userId: string) {
+export async function sendWeeklyReportEmail() {
   try {
-    const user = await db.user.findUnique({
-      where: { externalUserId: userId },
+    const users = await db.user.findMany({
+      where: { sendWeeklyReport: true },
+      include: {
+        reminder: {
+          where: {
+            reminderStatus: "COMPLETED",
+          },
+        },
+      },
     });
 
-    if (!user) {
+    if (!users) {
       throw new Error("User not found");
-    }
-
-    // Check if user wants weekly report
-    if (!user.sendWeeklyReport) {
-      console.log(`User ${user.email} has disabled weekly report`);
-      return null;
     }
 
     // Calculate week start and end dates
@@ -122,132 +128,57 @@ export async function sendWeeklyReportEmail(userId: string) {
     weekEnd.setDate(weekStart.getDate() + 6);
     weekEnd.setHours(23, 59, 59, 999);
 
-    // Get completed reminders for this week
-    const completedReminders = await db.reminder.findMany({
-      where: {
-        userId: user.externalUserId,
-        reminderStatus: "COMPLETED",
-        updatedAt: {
-          gte: weekStart,
-          lte: weekEnd,
-        },
-      },
-    });
+    const sentEmails = Promise.allSettled(
+      users.map(async (user) => {
+        // Get completed reminders for this week
+        const completedReminders = user.reminder.filter(
+          (r) =>
+            r.updatedAt >= weekStart &&
+            r.updatedAt <= weekEnd &&
+            r.reminderStatus === "COMPLETED",
+        );
+        var [easyCompleted, mediumCompleted, hardCompleted] = [0, 0, 0];
+        completedReminders.forEach((r) => {
+          if (r.problemDifficulty === "EASY") {
+            easyCompleted++;
+          } else if (r.problemDifficulty === "MEDIUM") {
+            mediumCompleted++;
+          } else if (r.problemDifficulty === "HARD") {
+            hardCompleted++;
+          }
+        });
+        const emailData = {
+          userName: user.email.split("@")[0],
+          completedProblems: completedReminders.length,
+          totalReminders: user.reminder.length,
+          easyCompleted,
+          mediumCompleted,
+          hardCompleted,
+          weekStartDate: weekStart.toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+          }),
+          weekEndDate: weekEnd.toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+          }),
+        };
 
-    // Get total reminders for this week
-    const totalReminders = await db.reminder.count({
-      where: {
-        userId: user.externalUserId,
-        scheduledDate: {
-          gte: weekStart,
-          lte: weekEnd,
-        },
-      },
-    });
-
-    // Count by difficulty
-    const easyCompleted = completedReminders.filter(
-      (r) => r.problemDifficulty === "EASY",
-    ).length;
-    const mediumCompleted = completedReminders.filter(
-      (r) => r.problemDifficulty === "MEDIUM",
-    ).length;
-    const hardCompleted = completedReminders.filter(
-      (r) => r.problemDifficulty === "HARD",
-    ).length;
-
-    const emailData = {
-      userName: user.email.split("@")[0],
-      completedProblems: completedReminders.length,
-      totalReminders,
-      easyCompleted,
-      mediumCompleted,
-      hardCompleted,
-      weekStartDate: weekStart.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
+        const template = weeklyReportTemplate(emailData);
+        return await sendEmail({
+          to: user.email,
+          subject: template.subject,
+          html: template.html,
+          text: template.text,
+        });
       }),
-      weekEndDate: weekEnd.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-      }),
-    };
-
-    const template = weeklyReportTemplate(emailData);
-
-    const result = await sendEmail({
-      to: user.email,
-      subject: template.subject,
-      html: template.html,
-      text: template.text,
+    );
+    sentEmails.catch((error) => {
+      console.error("Error sending weekly report:", error);
+      throw error;
     });
-
-    console.log(`Weekly report sent to ${user.email}`);
-    return result;
   } catch (error) {
     console.error("Error sending weekly report:", error);
-    throw error;
-  }
-}
-
-// Send upcoming reminder notification (for reminders due in next 24 hours)
-export async function sendUpcomingReminderEmail(userId: string) {
-  try {
-    const user = await db.user.findUnique({
-      where: { externalUserId: userId },
-    });
-
-    if (!user || !user.sendUpcomingReminder) {
-      return null;
-    }
-
-    // Get reminders due in next 24 hours
-    const upcomingReminders = await db.reminder.findMany({
-      where: {
-        userId: user.externalUserId,
-        reminderStatus: "UPCOMING",
-        scheduledDate: {
-          gte: new Date(),
-          lte: new Date(Date.now() + 24 * 60 * 60 * 1000),
-        },
-      },
-      orderBy: { scheduledDate: "asc" },
-    });
-
-    if (upcomingReminders.length === 0) {
-      return null;
-    }
-
-    const emailData = {
-      userName: user.email.split("@")[0],
-      todayReminders: [],
-      upcomingReminders: upcomingReminders.map((r) => ({
-        problemTitle: r.problemTitle,
-        problemSlug: r.problemSlug,
-        problemDifficulty: r.problemDifficulty as "EASY" | "MEDIUM" | "HARD",
-        scheduledDate: r.scheduledDate.toLocaleDateString("en-US", {
-          weekday: "short",
-          month: "short",
-          day: "numeric",
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-      })),
-    };
-
-    const template = dailyDigestTemplate(emailData);
-
-    const result = await sendEmail({
-      to: user.email,
-      subject: `🔔 ${upcomingReminders.length} reminder${upcomingReminders.length > 1 ? "s" : ""} coming up!`,
-      html: template.html,
-      text: template.text,
-    });
-
-    console.log(`Upcoming reminder notification sent to ${user.email}`);
-    return result;
-  } catch (error) {
-    console.error("Error sending upcoming reminder email:", error);
     throw error;
   }
 }
