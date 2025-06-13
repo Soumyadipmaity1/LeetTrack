@@ -1,53 +1,41 @@
+"use server";
 
-"use client";
-
-import SearchFilter from "@/components/Essentials/SearchFilter";
-import RemainderModal from "@components/Essentials/RemainderModal";
-import RemainderTable from "@components/Essentials/RemainderTable";
+import { AddReminderModal } from "@components/Essentials/ReminderDialog";
 import Reminders from "@components/Essentials/Reminders";
-import { Button } from "@components/ui/button";
-import { Plus } from "lucide-react";
-import { useState } from "react";
+import ReminderTable from "@components/Essentials/ReminderTable";
+import { getReminders } from "./dashboard-action";
 
-const Page = () => {
-const [isOpen, setIsOpen] = useState(false);
+export default async function Dashboard() {
+  const receivedData = await getReminders();
 
-return (
-<main className="min-h-screen flex flex-col pt-7">
+  if (receivedData?.serverError) {
+    return <>An error occurred while fetching reminders.</>;
+  }
 
-{/* Header and Add Reminder Button */}
-<div className="flex items-center justify-between mb-6 ">
-<h1 className="text-3xl font-bold">LeetTrack Reminder Dashboard</h1>
-<Button
-className="cursor-pointer p-2 flex items-center gap-2"
-onClick={() => setIsOpen(true)}
->
-<Plus /> Add Reminder
-</Button>
-</div>
+  return (
+    <main className="min-h-screen flex flex-col pt-7">
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-3xl font-bold">LeetTrack Reminder Dashboard</h1>
+        {/* Modal for Adding a Reminder */}
+        <AddReminderModal />
+      </div>
 
-{/* Stats, Calendar, and Search/Filter */}
-<div className="mb-4">
-{/* Place your stats and calendar components here if you have them */}
-<Reminders />
-</div>
+      {/* Stats, Calendar, and Search/Filter */}
+      <div className="mb-4">
+        {/* Place your stats and calendar components here if you have them */}
+        <Reminders reminders={receivedData?.data || []} />
+      </div>
 
-{/* Search & Filter */}
-<div className="mb-3.5">
-<SearchFilter />
-</div>
+      {/* Search & Filter */}
+      {/* <div className="mb-3.5">
+        <SearchFilter />
+      </div> */}
 
-{/* Reminders Table */}
-<div className="mb-5">
-{/* If you want to use the custom RemainderTable, replace <Reminders /> with */}
-<RemainderTable />
-</div>
-
-
-{/* Modal for Adding a Reminder */}
-<RemainderModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
-</main>
-);
-};
-
-export default Page;
+      {/* Reminders Table */}
+      <div className="mb-5">
+        {/* If you want to use the custom ReminderTable, replace <Reminders /> with */}
+        <ReminderTable reminders={receivedData?.data || []} />
+      </div>
+    </main>
+  );
+}

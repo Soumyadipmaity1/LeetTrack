@@ -8,25 +8,22 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum NOTIFICATION_METHOD {
-  EMAIl
-  PUSH_NOTIFICATION // For browser notifications
-}
-
 model User {
-  id             String @id @default(cuid())
-  externalUserId String @unique
+  externalUserId String @id
   email          String @unique
   phoneNumber    String @unique
 
-  username         String
-  profileImage     String
-  leetCodeUsername String @unique @default(cuid())
+  // Email Reminders
+  sendEmailReminder    Boolean @default(true)
+  sendUpcomingReminder Boolean @default(true)
+  sendDailyDigest      Boolean @default(true)
+  sendWeeklyReport     Boolean @default(true)
 
-  bio   String @default("")
-  goals String @default("")
-
-  preferredNotificationMethod NOTIFICATION_METHOD @default(EMAIl)
+  // Push Notifications
+  sendNotifReminder         Boolean @default(false)
+  sendUpcomingNotifReminder Boolean @default(false)
+  sendAchievementAlert      Boolean @default(false)
+  sendStreakReminder        Boolean @default(false)
 
   // User can set multiple reminders
   reminder Reminder[]
@@ -54,22 +51,19 @@ model Reminder {
   reminderStatus REMINDER_STATUS @default(UPCOMING)
 
   // Details of the problem
-  problemId         String?
-  problemName       String?
-  problemStatement  String?
-  problemTags       String[]
+  // Leetcode Link: https://leetcode.com/problems/problem-name
+  problemSlug       String
+  problemTitle      String
   problemDifficulty PROBLEM_DIFFICULTY @default(EASY)
-  // Leetcode Link
-  problemLink       String
 
   // Date when the reminder will be sent
   scheduledDate DateTime
 
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [externalUserId], onDelete: Cascade)
   userId String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([userId, problemId, problemLink])
+  @@index([userId, problemSlug])
 }

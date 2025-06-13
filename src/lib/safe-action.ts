@@ -36,6 +36,14 @@ export const authActionClient = actionClient
     if (!session.userId) {
       throw new Error("User ID not found!");
     }
+    const user = await db.user.findUnique({
+      where: {
+        externalUserId: session.userId,
+      },
+    });
+    if (!user) {
+      throw new Error("User not found not database!");
+    }
     // Return the next middleware with `user` value in the context
-    return next({ ctx: { user: session } });
+    return next({ ctx: { user } });
   });

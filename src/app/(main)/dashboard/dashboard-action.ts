@@ -2,24 +2,26 @@
 
 import { getQuestionOfTheDay, searchQuestion } from "@lib/leetcode";
 import { authActionClient } from "@lib/safe-action";
+import { PROBLEM_DIFFICULTY, REMINDER_STATUS } from "@prisma-client";
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
-const searchQuestionsSchema = z.object({
-  questionTitle: z.string().optional(),
-  questionTags: z.array(z.string()).optional(),
-  questionDifficulty: z.enum(["EASY", "MEDIUM", "HARD"]).optional(),
-});
+// const searchQuestionsSchema = z.object({
+//   questionTitle: z.string().optional(),
+//   questionTags: z.array(z.string()).optional(),
+//   questionDifficulty: z.enum(["EASY", "MEDIUM", "HARD"]).optional(),
+// });
 
-// Fetching details of leetcode question
-export const searchQuestions = authActionClient
-  .schema(searchQuestionsSchema)
-  .action(async ({ parsedInput }) => {
-    return await searchQuestion({
-      questionTitle: parsedInput.questionTitle,
-      questionTags: parsedInput.questionTags,
-      questionDifficulty: parsedInput.questionDifficulty,
-    });
-  });
+// // Fetching details of leetcode question
+// export const searchQuestions = authActionClient
+//   .schema(searchQuestionsSchema)
+//   .action(async ({ parsedInput }) => {
+//     return await searchQuestion({
+//       questionTitle: parsedInput.questionTitle,
+//       questionTags: parsedInput.questionTags,
+//       questionDifficulty: parsedInput.questionDifficulty,
+//     });
+//   });
 
 // Get QOTD
 export const getQOTD = authActionClient.action(async () => {
@@ -27,12 +29,7 @@ export const getQOTD = authActionClient.action(async () => {
 });
 
 const createReminderSchema = z.object({
-  problemId: z.string().optional(),
-  problemName: z.string().optional(),
-  problemStatement: z.string().optional(),
-  problemTags: z.array(z.string()).optional(),
-  problemDifficulty: z.enum(["EASY", "MEDIUM", "HARD"]).optional(),
-  problemLink: z.string(),
+  problemSlug: z.string(),
   scheduledDate: z.date(),
 });
 
@@ -40,12 +37,28 @@ const createReminderSchema = z.object({
 export const createReminder = authActionClient
   .schema(createReminderSchema)
   .action(async ({ ctx, parsedInput }) => {
+    const { problemSlug, scheduledDate } = parsedInput;
+    const questionData = await searchQuestion({
+      questionTitleSlug: problemSlug,
+    });
+
+    if (!questionData) {
+      throw new Error("Question not found!");
+    }
+
     await ctx.db.reminder.create({
       data: {
-        userId: ctx.user.userId,
-        ...parsedInput,
+        userId: ctx.user.externalUserId,
+        problemSlug,
+        problemTitle: questionData.questionTitle,
+        scheduledDate: scheduledDate,
+        problemDifficulty:
+          questionData.difficulty.toUpperCase() as PROBLEM_DIFFICULTY,
       },
     });
+    revalidatePath("/dashboard");
+    revalidatePath("/calendar");
+    return;
   });
 
 // Used for fetching reminders for the authenticated user.
@@ -54,35 +67,47 @@ export const getReminders = authActionClient.action(async ({ ctx }) => {
   // and filter them accordingly if needed (refer to prisma schema for details).
   return await ctx.db.reminder.findMany({
     where: {
-      userId: ctx.user.userId,
+      userId: ctx.user.externalUserId,
     },
   });
 });
 
 const updateReminderSchema = z.object({
   reminderId: z.string().cuid(),
-  problemId: z.string().optional(),
-  problemName: z.string().optional(),
-  problemStatement: z.string().optional(),
-  problemTags: z.array(z.string()).optional(),
-  problemDifficulty: z.enum(["EASY", "MEDIUM", "HARD"]).optional(),
-  problemLink: z.string(),
+  problemSlug: z.string(),
   scheduledDate: z.date(),
+  reminderStatus: z.nativeEnum(REMINDER_STATUS),
 });
 
 // Used for updating a reminder.
 export const updateReminder = authActionClient
   .schema(updateReminderSchema)
   .action(async ({ ctx, parsedInput }) => {
+    const { problemSlug, scheduledDate, reminderId, reminderStatus } =
+      parsedInput;
+    const questionData = await searchQuestion({
+      questionTitleSlug: problemSlug,
+    });
+
+    if (!questionData) {
+      throw new Error("Question not found!");
+    }
+
     await ctx.db.reminder.update({
       where: {
-        id: parsedInput.reminderId,
+        id: reminderId,
       },
       data: {
-        userId: ctx.user.userId ?? "user_id",
-        ...parsedInput,
+        userId: ctx.user.externalUserId,
+        scheduledDate,
+        problemSlug: problemSlug,
+        problemTitle: questionData.questionTitle,
+        problemDifficulty:
+          questionData.difficulty.toUpperCase() as PROBLEM_DIFFICULTY,
+        reminderStatus,
       },
     });
+    return revalidatePath("/dashboard");
   });
 
 const deleteReminderSchema = z.object({
@@ -93,9 +118,10 @@ export const deleteReminder = authActionClient
   .schema(deleteReminderSchema)
   .action(async ({ ctx, parsedInput }) => {
     const { reminderId } = parsedInput;
-    return await ctx.db.reminder.delete({
+    await ctx.db.reminder.delete({
       where: {
         id: reminderId,
       },
     });
+    return revalidatePath("/dashboard");
   });

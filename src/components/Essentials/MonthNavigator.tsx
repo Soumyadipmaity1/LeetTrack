@@ -14,10 +14,19 @@ export default function MonthNavigator({
   goToPreviousMonth,
   goToNextMonth,
 }: MonthNavigatorProps) {
-  
   const monthNames = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ];
 
   return (
@@ -33,6 +42,6 @@ export default function MonthNavigator({
       <Button variant="outline" size="icon" onClick={goToNextMonth}>
         <ChevronRight className="w-4 h-4" />
       </Button>
- </div>
-);
+    </div>
+  );
 }

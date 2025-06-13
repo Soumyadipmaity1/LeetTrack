@@ -1,28 +1,27 @@
 "use client";
 
-import React from "react";
+import { Reminder } from "@prisma-client";
 import {
   addDays,
-  startOfWeek,
-  endOfWeek,
-  startOfMonth,
   endOfMonth,
+  endOfWeek,
   isSameDay,
   isSameMonth,
+  startOfMonth,
+  startOfWeek,
 } from "date-fns";
-
-export type Reminder = {
-  title: string;
-  date: string;
-  status: "upcoming" | "missed" | "completed";
-};
+import Link from "next/link";
+import React from "react";
 
 type CalendarProps = {
   currentMonth: Date;
   reminders: Reminder[];
 };
 
-export default function CalendarMonth({ currentMonth, reminders }: CalendarProps) {
+export default function CalendarMonth({
+  currentMonth,
+  reminders,
+}: CalendarProps) {
   const startDate = startOfWeek(startOfMonth(currentMonth));
   const endDate = endOfWeek(endOfMonth(currentMonth));
   const today = new Date();
@@ -31,41 +30,49 @@ export default function CalendarMonth({ currentMonth, reminders }: CalendarProps
   let day = startDate;
 
   while (day <= endDate) {
-    const dayReminders = reminders.filter((r) => isSameDay(new Date(r.date), day));
+    const dayReminders = reminders.filter((r) =>
+      isSameDay(new Date(r.scheduledDate), day)
+    );
     const isToday = isSameDay(day, today);
 
     days.push(
       <div
         key={day.toDateString()}
-        className={`border h-24 text-sm relative rounded-xl p-2 shadow-sm hover:bg-gray-50 ${
-          isSameMonth(day, currentMonth) ? "bg-white" : "bg-gray-100 text-gray-400"
+         className={`border min-h-[100px] text-sm relative rounded-xl p-3 shadow-sm hover:bg-gray-50 ${
+          isSameMonth(day, currentMonth)
+            ? "bg-white"
+            : "bg-gray-100 text-gray-400"
         }`}
       >
         <div className="flex justify-between items-start mb-1">
           <div
-            className={`text-xs font-medium px-1 rounded ${
-              isToday ? "bg-indigo-100 text-indigo-700" : ""
-            }`}
-          >
-            {day.getDate()}
-          </div>
-          <button className="text-xs text-gray-400 hover:text-black">+</button>
+  className={`text-base font-semibold px-2 rounded ${
+    isToday ? "bg-indigo-100 text-indigo-700" : ""
+         }`}
+      >
+          {day.getDate()}
         </div>
+         </div>
 
-        {dayReminders.map((reminder, idx) => (
-          <div
-            key={idx}
-            className={`text-xs truncate ${
-              reminder.status === "missed"
-                ? "text-red-600"
-                : reminder.status === "completed"
-                ? "text-green-600"
-                : "text-yellow-600"
-            }`}
-          >
-            • {reminder.title}
-          </div>
-        ))}
+        <div className="flex flex-col">
+          {dayReminders.map((reminder, idx) => (
+            <Link
+              href={`https://leetcode.com/problems/${reminder.problemSlug}`}
+              target="_blank"
+              key={idx}
+              className={`text-xs truncate cursor-pointer ${
+                reminder.reminderStatus === "PENDING"
+                  ? "text-red-600"
+                  : reminder.reminderStatus === "COMPLETED"
+                  ? "text-green-600"
+                  : "text-yellow-600"
+              }`}
+              prefetch
+            >
+              • {reminder.problemTitle}
+            </Link>
+          ))}
+        </div>
       </div>
     );
 
@@ -74,12 +81,13 @@ export default function CalendarMonth({ currentMonth, reminders }: CalendarProps
 
   return (
     <div className="bg-white rounded-xl shadow-md overflow-hidden border">
-      <div className="grid grid-cols-7 text-center bg-gray-100 text-sm font-medium p-2 rounded-t-xl">
+      <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 text-center bg-gray-100 text-xs sm:text-sm font-medium p-2 rounded-t-xl">
+
         {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
           <div key={day}>{day}</div>
         ))}
       </div>
-      <div className="grid grid-cols-7 gap-px">{days}</div>
+      <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-px"> {days}</div>
     </div>
   );
 }

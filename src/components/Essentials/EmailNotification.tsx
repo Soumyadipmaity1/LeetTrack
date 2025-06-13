@@ -1,19 +1,20 @@
 "use client";
 
+import { updateEmailNotificationSettings } from "@/app/(main)/settings/settings-action";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import { Mail, Save } from "lucide-react";
-import { useState } from "react";
+import { User } from "@prisma-client";
+import { Loader2, Mail } from "lucide-react";
+import { useAction } from "next-safe-action/hooks";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
-export default function EmailNotifications() {
-  const [enabled, setEnabled] = useState(false);
-  const [reminder, setReminder] = useState(false);
-  const [daily, setDaily] = useState(false);
-  const [weekly, setWeekly] = useState(false);
-  const [achievement, setAchievement] = useState(false);
-  const [digestTime, setDigestTime] = useState("09:00");
+export default function EmailNotifications({ userData }: { userData: User }) {
+  const [enabled, setEnabled] = useState(userData.sendEmailReminder);
+  const [reminder, setReminder] = useState(userData.sendUpcomingReminder);
+  const [daily, setDaily] = useState(userData.sendDailyDigest);
+  const [weekly, setWeekly] = useState(userData.sendWeeklyReport);
 
   return (
     <Card className="max-w-full">
@@ -70,36 +71,61 @@ export default function EmailNotifications() {
           <Switch checked={weekly} onCheckedChange={setWeekly} />
         </div>
 
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm font-semibold">Achievement Notifications</p>
-            <p className="text-xs text-muted-foreground font-semibold">
-              Celebrate your milestones
-            </p>
-          </div>
-          <Switch checked={achievement} onCheckedChange={setAchievement} />
-        </div>
-
-        <div>
-          <p className="text-sm font-semibold">Daily Digest Time</p>
-          <Input
-            type="time"
-            value={digestTime}
-            onChange={(e) => setDigestTime(e.target.value)}
-            className="mt-1 w-28"
-          />
-        </div>
-
         <div className="flex justify-between">
           <Button variant="outline" className="mb-4">
             Send Test Email
           </Button>
-          <Button className="rounded">
-            <Save />
-            Save Notification Settings
-          </Button>
+          <SaveNotificationSettingsButton
+            enabled={enabled}
+            reminder={reminder}
+            daily={daily}
+            weekly={weekly}
+          />
         </div>
       </CardContent>
     </Card>
+  );
+}
+
+function SaveNotificationSettingsButton({
+  enabled,
+  reminder,
+  daily,
+  weekly,
+}: {
+  enabled: boolean;
+  reminder: boolean;
+  daily: boolean;
+  weekly: boolean;
+}) {
+  const { execute, hasErrored, hasSucceeded, isExecuting } = useAction(
+    updateEmailNotificationSettings
+  );
+
+  useEffect(() => {
+    if (hasSucceeded) {
+      toast.success("Successfully updated notification settings");
+    }
+
+    if (hasErrored) {
+      toast.error("Error updating notification settings");
+    }
+  }, [hasSucceeded, hasErrored]);
+
+  return (
+    <Button
+      disabled={isExecuting}
+      className="rounded"
+      onClick={() => {
+        execute({
+          sendEmailReminder: enabled,
+          sendUpcomingReminder: reminder,
+          sendDailyDigest: daily,
+          sendWeeklyReport: weekly,
+        });
+      }}
+    >
+      {!isExecuting ? "Save" : <Loader2 className="animate-spin" />}
+    </Button>
   );
 }

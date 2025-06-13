@@ -2,22 +2,32 @@
 
 import { Button } from "@/components/ui/button";
 import { ChevronDown, LayoutGrid } from "lucide-react";
+import { AddReminderModal } from "./ReminderDialog";
 
-type CalendarActionsProps= {
+type CalendarActionsProps = {
   currentDate: Date;
   onMonthChange: (month: number) => void;
   goToToday: () => void;
-}
+};
 
 export default function CalendarActions({
   currentDate,
   onMonthChange,
   goToToday,
 }: CalendarActionsProps) {
-  
   const monthNames = [
-    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
   ];
 
   return (
@@ -41,7 +51,7 @@ export default function CalendarActions({
       <Button variant="outline" onClick={goToToday}>
         Today
       </Button>
-      <Button>Add Reminder</Button>
- </div>
- );
+      <AddReminderModal />
+    </div>
+  );
 }
