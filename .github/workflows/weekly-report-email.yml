@@ -2,7 +2,7 @@ name: Weekly Report
 
 on:
   schedule:
-    - cron: "30 13 * * 0" # Runs weekly at 7:00 PM IST (UTC+5:30) on Sunday
+    - cron: "45 14 * * 0" # Runs weekly at 8:15 PM IST (UTC+5:30) on Sunday
   workflow_dispatch: # Allows manual runs for testing
 
 jobs:

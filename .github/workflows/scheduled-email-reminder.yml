@@ -2,7 +2,7 @@ name: Scheduled Email Reminder
 
 on:
   schedule:
-    - cron: "30 13 * * *" # Runs daily at 7:00 PM IST (UTC+5:30)
+    - cron: "45 14 * * *" # Runs daily at 8:15 PM IST (UTC+5:30)
   workflow_dispatch: # Allows manual runs for testing
 
 jobs:
