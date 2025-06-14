@@ -47,9 +47,9 @@ export default function CalendarMonth({
       statusIcon = (
         <span className={`ml-2 text-lg`}>
           {allCompleted ? (
-            <CheckCircle className="w-4 h-4 text-green-500" />
+            <CheckCircle className="w-5 h-5 text-green-500" />
           ) : (
-            <XCircle className="w-4 h-4 text-red-400" />
+            <XCircle className="w-5 h-5 text-red-400" />
           )}
         </span>
       );
