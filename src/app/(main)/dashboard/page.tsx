@@ -6,9 +6,11 @@ import ReminderTable from "@components/Essentials/ReminderTable";
 import { getReminders } from "./dashboard-action";
 
 export default async function Dashboard() {
-  const receivedData = await {data: []};
+  const receivedData = await getReminders();
 
-  
+  if (receivedData?.serverError) {
+    return <>An error occurred while fetching reminders.</>;
+  }
 
   return (
     <main className="min-h-screen flex flex-col pt-7">
