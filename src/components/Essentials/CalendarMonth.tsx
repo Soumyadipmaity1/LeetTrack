@@ -10,6 +10,7 @@ import {
   startOfMonth,
   startOfWeek,
 } from "date-fns";
+import { CheckCircle, XCircle } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
@@ -19,7 +20,6 @@ type CalendarProps = {
   completedDates: Record<string, boolean>;
   onToggleCompletion: (dateStr: string) => void;
 };
-
 
 export default function CalendarMonth({
   currentMonth,
@@ -34,7 +34,7 @@ export default function CalendarMonth({
 
   while (day <= endDate) {
     const dayReminders = reminders.filter((r) =>
-      isSameDay(new Date(r.scheduledDate), day)
+      isSameDay(new Date(r.scheduledDate), day),
     );
     const isToday = isSameDay(day, today);
 
@@ -42,11 +42,15 @@ export default function CalendarMonth({
     let statusIcon = null;
     if (dayReminders.length > 0) {
       const allCompleted = dayReminders.every(
-        (r) => r.reminderStatus === "COMPLETED"
+        (r) => r.reminderStatus === "COMPLETED",
       );
       statusIcon = (
         <span className={`ml-2 text-lg`}>
-          {allCompleted ? "✔️" : "✗"}
+          {allCompleted ? (
+            <CheckCircle className="w-4 h-4 text-green-500" />
+          ) : (
+            <XCircle className="w-4 h-4 text-red-400" />
+          )}
         </span>
       );
     } else {
@@ -85,8 +89,8 @@ export default function CalendarMonth({
                 reminder.reminderStatus === "PENDING"
                   ? "text-red-600"
                   : reminder.reminderStatus === "COMPLETED"
-                  ? "text-green-600"
-                  : "text-yellow-600"
+                    ? "text-green-600"
+                    : "text-yellow-600"
               }`}
               prefetch
             >
@@ -94,7 +98,7 @@ export default function CalendarMonth({
             </Link>
           ))}
         </div>
-      </div>
+      </div>,
     );
 
     day = addDays(day, 1);
