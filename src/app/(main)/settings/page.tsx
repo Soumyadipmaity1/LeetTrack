@@ -14,10 +14,10 @@ import { getSettings } from "./settings-action";
 export default async function SettingsPage() {
   const receivedData = await {data: []};
   return (
-    <main className="flex flex-col items-center">
-      <div className="w-full max-w-5xl ">
-        <div className="items-center justify-between mb-6">
-          <h1 className="text-3xl font-bold">Settings</h1>
+    <main className="flex flex-col items-start pt-0 mt-0">
+      <div className="w-full px-4 sm:px-8 ">
+        <div className="items-center justify-between mb-6 mt-0">
+          <h1 className="text-3xl font-bold mb-1">Settings</h1>
           <h5 className={`${roboto.className} text-xs text-slate-400`}>
             Manage your account settings and preferences.
           </h5>

@@ -42,10 +42,10 @@ export default function CalendarPage({ reminders }: { reminders: Reminder[] }) {
   };
 
   return (
-    <div className="pt-4 px-6">
-      <div className="mb-2 flex items-center space-x-2">
-        <CalendarIcon className="w-6 h-6" />
-        <h1 className="text-2xl font-semibold">Calendar View</h1>
+    <div className="pt-0 mt-0 px-6">
+      <div className="mb-6 flex items-center space-x-2">
+        
+        <h1 className="text-3xl font-bold">Calendar View</h1>
       </div>
 
       <div className="flex flex-wrap justify-between items-start mb-4">
