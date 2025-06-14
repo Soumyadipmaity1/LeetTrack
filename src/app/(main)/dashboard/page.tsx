@@ -4,6 +4,7 @@ import { AddReminderModal } from "@components/Essentials/ReminderDialog";
 import Reminders from "@components/Essentials/Reminders";
 import ReminderTable from "@components/Essentials/ReminderTable";
 import { getReminders } from "./dashboard-action";
+import SearchFilter from "@components/Essentials/SearchFilter"
 
 export default async function Dashboard() {
   const receivedData = await {data: []};
@@ -25,9 +26,9 @@ export default async function Dashboard() {
       </div>
 
       {/* Search & Filter */}
-      {/* <div className="mb-3.5">
+      <div className="mb-3.5">
         <SearchFilter />
-      </div> */}
+      </div> 
 
       {/* Reminders Table */}
       <div className="mb-5">

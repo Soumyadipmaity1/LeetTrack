@@ -4,11 +4,23 @@ import CalendarActions from "@components/Essentials/CalendarAction";
 import CalendarMonth from "@components/Essentials/CalendarMonth";
 import MonthNavigator from "@components/Essentials/MonthNavigator";
 import { Reminder } from "@prisma-client";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, CheckCircle, XCircle } from "lucide-react";
 import { useState } from "react";
+
+const formatDate = (date: Date) => date.toISOString().split('T')[0];
 
 export default function CalendarPage({ reminders }: { reminders: Reminder[] }) {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [completedDates, setCompletedDates] = useState<Record<string, boolean>>({});
+
+  // Toggle completion status for a specific date
+  const toggleDateCompletion = (dateStr: string) => {
+    setCompletedDates(prev => ({
+      ...prev,
+      [dateStr]: !prev[dateStr]
+    }));
+  };
+
   const goToPreviousMonth = () => {
     setCurrentDate(
       new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1)
@@ -48,7 +60,25 @@ export default function CalendarPage({ reminders }: { reminders: Reminder[] }) {
           goToToday={goToToday}
         />
       </div>
-      <CalendarMonth currentMonth={currentDate} reminders={reminders} />
+
+      {/* Legend for tick and cross */}
+      <div className="flex items-center space-x-4 mb-4">
+        <span className="flex items-center space-x-1">
+          <CheckCircle className="w-4 h-4 text-green-500" />
+          <span className="text-sm">Completed</span>
+        </span>
+        <span className="flex items-center space-x-1">
+          <XCircle className="w-4 h-4 text-red-400" />
+          <span className="text-sm">Not Completed</span>
+        </span>
+      </div>
+
+      <CalendarMonth 
+        currentMonth={currentDate} 
+        reminders={reminders}
+        completedDates={completedDates}
+        onToggleCompletion={toggleDateCompletion}
+      />
     </div>
   );
 }
