@@ -18,12 +18,13 @@ interface SendEmailOptions {
 export async function sendEmail({ to, subject, html, text }: SendEmailOptions) {
   try {
     const msg = await resend.emails.send({
-      from: process.env.FROM_EMAIL as string,
-      to,
+      from: "Leet Track <onboarding@resend.dev>",
+      to: [process.env.REGISTERED_EMAIL!],
       subject,
       html,
       text,
     });
+    console.log(msg);
     return msg;
   } catch (err) {
     console.error("Resend sendEmail error:", err);
