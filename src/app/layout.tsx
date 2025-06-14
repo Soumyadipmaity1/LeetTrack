@@ -2,6 +2,8 @@ import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
+import { NotificationProvider } from "@/components/Essentials/NotificationContext";
+import Navbar from "@/components/Essentials/Navbar";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -26,12 +28,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ClerkProvider>
-          <Toaster richColors />
-          {children}
+          <NotificationProvider>
+            <Toaster richColors />
+            <Navbar />
+            <div className="pt-16">{children}</div>
+          </NotificationProvider>
         </ClerkProvider>
       </body>
     </html>
