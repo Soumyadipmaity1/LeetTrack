@@ -1,4 +1,4 @@
-"use client";
+"use server";
 import { Roboto } from "next/font/google";
 const roboto = Roboto({
   weight: "400",
@@ -12,11 +12,7 @@ import { Bell } from "lucide-react";
 import { getSettings } from "./settings-action";
 
 export default async function SettingsPage() {
-  const receivedData = await getSettings();
-  const userData = receivedData?.data;
-  if (!userData) {
-    return <div>Error: No user data found</div>;
-  }
+  const receivedData = await {data: []};
   return (
     <main className="min-h-screen flex flex-col items-center">
       <div className="w-full max-w-5xl">
@@ -37,8 +33,8 @@ export default async function SettingsPage() {
             </TabsTrigger>
           </TabsList>
           <TabsContent value="notifications">
-            <EmailNotifications userData={userData}/>
-            <PushNotification userData={userData}/>
+            <EmailNotifications userData={receivedData.data}/>
+            <PushNotification userData={receivedData.data}/>
           </TabsContent>
         </Tabs>
       </div>
