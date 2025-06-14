@@ -7,9 +7,11 @@ import { getReminders } from "./dashboard-action";
 import SearchFilter from "@components/Essentials/SearchFilter"
 
 export default async function Dashboard() {
-  const receivedData = await {data: []};
+  const receivedData = await getReminders();
 
-  
+  if (receivedData?.serverError) {
+    return <>An error occurred while fetching reminders.</>;
+  }
 
   return (
     <main className="flex flex-col pt-7">

@@ -1,23 +1,32 @@
 "use client";
-import { UserButton } from "@clerk/nextjs";
-import { useState, useRef, useEffect } from "react";
 import { NotificationBell } from "@/components/Essentials/NotificationBell";
 import { NotificationDropdown } from "@/components/Essentials/NotificationDropdown";
+import { UserButton } from "@clerk/nextjs";
+import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
 const Navbar = () => {
+  const pathname = usePathname();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setDropdownOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  if (pathname == "/login" || pathname == "/signup") {
+    return null;
+  }
 
   return (
     <div className="bg-[#362e7b] text-white py-1.5 flex items-center justify-between border-b border-gray-800 w-full h-16 flex-shrink-0 fixed top-0 right-0 z-50">
@@ -31,7 +40,12 @@ const Navbar = () => {
           >
             <NotificationBell />
           </button>
-          {dropdownOpen && <NotificationDropdown open={dropdownOpen}onClose={() => setDropdownOpen(false)} />}
+          {dropdownOpen && (
+            <NotificationDropdown
+              open={dropdownOpen}
+              onClose={() => setDropdownOpen(false)}
+            />
+          )}
         </div>
         <UserButton />
       </div>
