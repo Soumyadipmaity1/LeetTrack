@@ -27,17 +27,17 @@ const elements = [
 
 export function SSidebar() {
   return (
-    <Sidebar className="pt-10 bg-gray-800">
-      <SidebarContent>
+    <Sidebar className="h-screen flex flex-col justify-between pt-10 [&>div]:bg-[#bcb4cc] text-black">
+      <SidebarContent className="flex-1 flex flex-col px-6 pt-1">
         <SidebarGroup>
-          <SidebarGroupLabel></SidebarGroupLabel>
+          <SidebarGroupLabel className="mb-4 text-lg font-bold"/>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="space-y-4 text-2xl font-bold">
               {elements.map((ele) => (
                 <SidebarMenuItem key={ele.title}>
                   <SidebarMenuButton asChild>
                     <Link href={ele.url} prefetch>
-                      <span>{ele.title}</span>
+                      <span className="text-base">{ele.title}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

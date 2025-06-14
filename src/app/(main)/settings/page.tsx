@@ -15,7 +15,7 @@ export default async function SettingsPage() {
   const receivedData = await {data: []};
   return (
     <main className="min-h-screen flex flex-col items-center">
-      <div className="w-full max-w-5xl">
+      <div className="w-full max-w-5xl ">
         <div className="items-center justify-between mb-6">
           <h1 className="text-3xl font-bold">Settings</h1>
           <h5 className={`${roboto.className} text-xs text-slate-400`}>
