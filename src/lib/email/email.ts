@@ -1,10 +1,6 @@
 import { db } from "@/lib/db";
 import { Resend } from "resend";
-import {
-  dailyDigestTemplate,
-  reminderEmailTemplate,
-  weeklyReportTemplate,
-} from "./email-templates";
+import { dailyDigestTemplate, reminderEmailTemplate, weeklyReportTemplate } from "./email-templates";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
@@ -45,12 +41,13 @@ export async function sendReminderEmails() {
             reminderStatus: "UPCOMING",
             scheduledDate: {
               // Get Reminders Due Today
-              equals: new Date(),
+              equals: new Date(new Date().toISOString().split("T")[0]),
             },
           },
         },
       },
     });
+
     const sentEmails = Promise.allSettled(
       users.map((user) => {
         const template = reminderEmailTemplate({
@@ -97,7 +94,7 @@ export async function sendDailyDigestEmail() {
           where: {
             // Get upcoming reminders for the next 7 days
             scheduledDate: {
-              gt: new Date(),
+              gt: new Date(new Date().toISOString().split("T")[0]),
               lte: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
             },
             reminderStatus: "UPCOMING",
@@ -149,7 +146,7 @@ export async function sendDailyDigestEmail() {
 // Send weekly report email
 export async function sendWeeklyReportEmail() {
   // Calculate week start and end dates
-  const now = new Date();
+  const now = new Date(new Date().toISOString().split("T")[0]);
   const weekStart = new Date(now.setDate(now.getDate() - now.getDay()));
   weekStart.setHours(0, 0, 0, 0);
   const weekEnd = new Date(weekStart);
