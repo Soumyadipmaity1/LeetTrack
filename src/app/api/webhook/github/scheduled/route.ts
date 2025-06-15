@@ -4,7 +4,7 @@ export async function POST(req: Request) {
   try {
     // Verify the request is from GitHub Actions (optional security measure)
     const authHeader = req.headers.get("authorization");
-    if (authHeader !== `Bearer ${process.env.GITHUB_WEBHOOK_SECRET}`) {
+    if (authHeader !== `Bearer ${process.env.CUSTOM_RESEND_WEBHOOK_SECRET}`) {
       return new Response("Unauthorized", { status: 401 });
     }
     await sendReminderEmails();
