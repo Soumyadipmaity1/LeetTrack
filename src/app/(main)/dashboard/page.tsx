@@ -18,9 +18,13 @@ export default async function Dashboard() {
   return (
     <main className="flex flex-col pt-0 mt-0">
       <div className="flex items-center justify-between mb-8">
-        <WelcomeBanner name="Eshita Kapat" />
-        {/* Modal for Adding a Reminder */}
-        <AddReminderModal />
+        <WelcomeBanner />
+        <div className="flex flex-row gap-2 items-center">
+          {/* Modal for Adding a Reminder */}
+          <AddReminderModal />
+          {/* Calendar Toggle Button and Calendar */}
+          <DashboardCalendarToggle />
+        </div>
       </div>
 
       {/* Stats Cards + Calendar Toggle */}
@@ -29,8 +33,6 @@ export default async function Dashboard() {
         <div className="flex flex-1 gap-4">
           <Reminders reminders={receivedData?.data || []} />
         </div>
-        {/* Calendar Toggle Button and Calendar */}
-        <DashboardCalendarToggle />
       </div>
 
       {/* Search & Filter */}
