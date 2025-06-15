@@ -1,6 +1,10 @@
 import { db } from "@/lib/db";
 import { Resend } from "resend";
-import { dailyDigestTemplate, reminderEmailTemplate, weeklyReportTemplate } from "./email-templates";
+import {
+  dailyDigestTemplate,
+  reminderEmailTemplate,
+  weeklyReportTemplate,
+} from "./email-templates";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
@@ -159,7 +163,6 @@ export async function sendWeeklyReportEmail() {
       include: {
         reminder: {
           where: {
-            reminderStatus: "COMPLETED",
             scheduledDate: {
               // get all completed reminders for the week
               gte: weekStart,
@@ -180,6 +183,7 @@ export async function sendWeeklyReportEmail() {
         const { reminder: completedReminders } = user;
         var [easyCompleted, mediumCompleted, hardCompleted] = [0, 0, 0];
         completedReminders.forEach((r) => {
+          if (r.reminderStatus !== "COMPLETED") return;
           if (r.problemDifficulty === "EASY") {
             easyCompleted++;
           } else if (r.problemDifficulty === "MEDIUM") {
@@ -190,7 +194,7 @@ export async function sendWeeklyReportEmail() {
         });
         const emailData = {
           userName: user.email.split("@")[0],
-          completedProblems: completedReminders.length,
+          completedProblems: easyCompleted + mediumCompleted + hardCompleted,
           totalReminders: user.reminder.length,
           easyCompleted,
           mediumCompleted,
