@@ -1,6 +1,8 @@
 // src/components/Essentials/NotificationContext.tsx
 "use client";
-import React, { createContext, useContext, useState } from "react";
+import { getReminders } from "@/app/(main)/dashboard/dashboard-action";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { toast } from "sonner";
 
 type Notification = { id: number; message: string; read: boolean };
 type NotificationContextType = {
@@ -10,28 +12,48 @@ type NotificationContextType = {
   unreadCount: number;
 };
 
-const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
+const NotificationContext = createContext<NotificationContextType | undefined>(
+  undefined,
+);
 
-export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
+
+  useEffect(() => {
+    const getData = async () => {
+      const reminders = await getReminders();
+      if (reminders?.serverError) {
+        toast.error("Failed to fetch notifications");
+      }
+      reminders?.data?.forEach(
+        (r) =>
+          r.reminderStatus === "PENDING" && addNotification(r.problemTitle),
+      );
+    };
+    getData();
+  }, []);
 
   const addNotification = (message: string) => {
     setNotifications((prev) => [
       ...prev,
-      { id: Date.now(), message, read: false }
+      { id: Date.now(), message, read: false },
     ]);
   };
 
   const markAsRead = (id: number) => {
-    setNotifications(prev =>
-      prev.map(n => n.id === id ? { ...n, read: true } : n)
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === id ? { ...n, read: true } : n)),
     );
   };
 
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
   return (
-    <NotificationContext.Provider value={{ notifications, addNotification, markAsRead, unreadCount }}>
+    <NotificationContext.Provider
+      value={{ notifications, addNotification, markAsRead, unreadCount }}
+    >
       {children}
     </NotificationContext.Provider>
   );
@@ -39,6 +61,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
 export const useNotification = () => {
   const context = useContext(NotificationContext);
-  if (!context) throw new Error("useNotification must be used within NotificationProvider");
+  if (!context)
+    throw new Error("useNotification must be used within NotificationProvider");
   return context;
 };

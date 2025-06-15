@@ -19,29 +19,34 @@ export const NotificationDropdown = ({
       tabIndex={0}
       onBlur={onClose}
     >
-      <div className="p-3 border-b font-semibold text-gray-700">Notifications</div>
-      <ul className="max-h-60 overflow-y-auto">
+      <div className="p-3 border-b font-semibold text-gray-700">
+        Notifications
+      </div>
+      <ul className="max-h-60 overflow-y-auto cursor-pointer">
         {notifications.length === 0 ? (
           <li className="p-4 text-gray-500 text-sm">No notifications</li>
         ) : (
-          notifications.map((notif) => (
-            <li
-              key={notif.id}
-              className={`p-3 border-b last:border-b-0 flex justify-between items-center ${
-                !notif.read ? "bg-blue-50" : ""
-              }`}
-            >
-              <span>{notif.message}</span>
-              {!notif.read && (
-                <button
-                  onClick={() => markAsRead(notif.id)}
-                  className="text-xs text-blue-600 hover:underline"
+          notifications.map(
+            (notif) =>
+              !notif.read && (
+                <li
+                  key={notif.id}
+                  className={`p-3 border-b last:border-b-0 flex justify-between items-center ${
+                    !notif.read ? "bg-blue-50" : ""
+                  }`}
                 >
-                  Mark read
-                </button>
-              )}
-            </li>
-          ))
+                  <span className="text-gray-800 font-thin">
+                    {notif.message}
+                  </span>
+                  <button
+                    onClick={() => markAsRead(notif.id)}
+                    className="text-xs text-blue-600 hover:underline cursor-pointer"
+                  >
+                    Mark read
+                  </button>
+                </li>
+              ),
+          )
         )}
       </ul>
     </div>
