@@ -69,6 +69,16 @@ export async function sendReminderEmails() {
       console.error("Error sending reminder email:", error);
       throw error;
     });
+    await db.reminder.updateMany({
+      data: {
+        reminderStatus: "PENDING",
+      },
+      where: {
+        id: {
+          in: users.flatMap((u) => u.reminder.map((reminder) => reminder.id)),
+        },
+      },
+    });
   } catch (error) {
     console.error("Error sending reminder email:", error);
     throw error;
@@ -102,10 +112,7 @@ export async function sendDailyDigestEmail() {
           todayReminders: user.reminder.map((r) => ({
             problemTitle: r.problemTitle,
             problemSlug: r.problemSlug,
-            problemDifficulty: r.problemDifficulty as
-              | "EASY"
-              | "MEDIUM"
-              | "HARD",
+            problemDifficulty: r.problemDifficulty,
           })),
           upcomingReminders: user.reminder
             .filter((r) => r.reminderStatus === "UPCOMING")
