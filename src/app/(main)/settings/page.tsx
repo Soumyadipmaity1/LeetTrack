@@ -12,7 +12,12 @@ import { Bell } from "lucide-react";
 import { getSettings } from "./settings-action";
 
 export default async function SettingsPage() {
-  const receivedData = await {data: []};
+  const receivedData = await getSettings();
+
+  if (receivedData?.serverError || !receivedData?.data) {
+    return <>An error occurred while fetching settings.</>;
+  }
+
   return (
     <main className="flex flex-col items-start pt-0 mt-0">
       <div className="w-full px-4 sm:px-8 ">
@@ -33,8 +38,8 @@ export default async function SettingsPage() {
             </TabsTrigger>
           </TabsList>
           <TabsContent value="notifications">
-            <EmailNotifications userData={receivedData.data}/>
-            <PushNotification userData={receivedData.data}/>
+            <EmailNotifications userData={receivedData.data} />
+            <PushNotification userData={receivedData.data} />
           </TabsContent>
         </Tabs>
       </div>

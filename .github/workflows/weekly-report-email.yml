@@ -1,0 +1,17 @@
+name: Weekly Report
+
+on:
+  schedule:
+    - cron: "45 14 * * 0" # Runs weekly at 8:15 PM IST (UTC+5:30) on Sunday
+  workflow_dispatch: # Allows manual runs for testing
+
+jobs:
+  deployment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Weekly Report
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: "${{ secrets.VERCEL_URL }}/api/webhook/github/weekly-report"
+          method: "POST"
+          customHeaders: '{"Content-Type": "application/json", "Authorization": "Bearer ${{ secrets.GITHUB_WEBHOOK_SECRET }}"}'

@@ -1,4 +1,4 @@
-import { sendReminderEmails } from "@lib/email/email";
+import { sendDailyDigestEmail } from "@lib/email/email";
 
 export async function POST(req: Request) {
   try {
@@ -7,10 +7,10 @@ export async function POST(req: Request) {
     if (authHeader !== `Bearer ${process.env.GITHUB_WEBHOOK_SECRET}`) {
       return new Response("Unauthorized", { status: 401 });
     }
-    await sendReminderEmails();
-    return new Response("Sent Scheduled Reminders", { status: 200 });
+    await sendDailyDigestEmail();
+    return new Response("Sent Daily Digest", { status: 200 });
   } catch (error) {
-    console.error("Error processing reminders:", error);
-    return new Response("Error processing reminders", { status: 500 });
+    console.error("Error sending daily digests:", error);
+    return new Response("Error sending daily digests", { status: 500 });
   }
 }

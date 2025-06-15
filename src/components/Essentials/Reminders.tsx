@@ -36,47 +36,36 @@ const Reminders = ({ reminders }: { reminders: Reminder[] }) => {
   const reminderData: ReminderStats = {
     "Total Reminders": reminders.length,
     "Upcoming Reminders": reminders.filter(
-      (r) => r.reminderStatus === "UPCOMING"
+      (r) => r.reminderStatus === "UPCOMING",
     ).length,
     "Completed Questions": reminders.filter(
-      (r) => r.reminderStatus === "COMPLETED"
+      (r) => r.reminderStatus === "COMPLETED",
     ).length,
     "Missed Reminders": reminders.filter(
       // Missed reminders are those that are pending
-      (r) => r.reminderStatus === "PENDING"
+      (r) => r.reminderStatus === "PENDING",
     ).length,
   };
 
   const [date, setDate] = React.useState<Date | undefined>(new Date());
 
   return (
-    <div className="max-w-full">
-      <div className="gap-3 flex">
-        {/* Stat Cards */}
-        {Object.entries(reminderData).map(([label, value]) => {
-          const { icon } = iconMap[label as keyof ReminderStats];
-          return (
-            <div key={label} className="border flex w-60 h-24 p-4">
-              <div>
-                <h3 className="text-sm text-gray-600 whitespace-nowrap">
-                  {label}
-                </h3>
-                <p className="text-2xl font-bold text-gray-800">{value}</p>
-              </div>
-              <div className="ml-6">{icon}</div>
+    <div className="w-full gap-3 grid grid-cols-4">
+      {/* Stat Cards */}
+      {Object.entries(reminderData).map(([label, value]) => {
+        const { icon } = iconMap[label as keyof ReminderStats];
+        return (
+          <div key={label} className="border w-full h-24 p-4">
+            <div>
+              <h3 className="text-sm text-gray-600 whitespace-nowrap">
+                {label}
+              </h3>
+              <p className="text-2xl font-bold text-gray-800">{value}</p>
             </div>
-          );
-        })}
-
-        {/* <div className="w-fit min-w-[250px]">
-          <Calendar
-            className="rounded-md border shadow-sm"
-            mode="single"
-            selected={date}
-            onSelect={setDate}
-          />
-        </div> */}
-      </div>
+            <div className="ml-6">{icon}</div>
+          </div>
+        );
+      })}
     </div>
   );
 };
